@@ -1,1 +1,1 @@
-# xeta-js
+# Official Javascript Client for Xeta
