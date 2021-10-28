@@ -1,4 +1,5 @@
-import { Model } from '../library/models'
+import { $fetch } from 'ohmyfetch'
+import { Models } from '../library/models'
 import { Config } from '../library/config'
 import { Transaction } from './transaction'
 
@@ -60,7 +61,7 @@ export const Token = {
      */
     batch: async (tokens) => {
         if (tokens.length > 8) throw Error('input: batch exceeds maximum items')
-        if (tokens.some(![undefined, 1].includes(t.supply))) throw Error('validation: function only supports non-fungible tokens')
+        if (tokens.some(t => ![undefined, 1].includes(t.supply))) throw Error('validation: function only supports non-fungible tokens')
 
         tokens.forEach(t => {
             Models.requiredFields(t, ['name'])

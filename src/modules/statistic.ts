@@ -1,4 +1,5 @@
-import { Model } from '../library/models'
+import { $fetch } from 'ohmyfetch'
+import { Models } from '../library/models'
 import { Config } from '../library/config'
 import { Transaction } from './transaction'
 

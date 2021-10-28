@@ -1,4 +1,5 @@
-import { Model } from '../library/models'
+import { $fetch } from 'ohmyfetch'
+import { Models } from '../library/models'
 import { Config } from '../library/config'
 import { Transaction } from './transaction'
 
@@ -18,7 +19,7 @@ export const Allowance = {
             message: JSON.stringify(allowance),
         }})
 
-        return Models.parseValues(r.data, Models.ALLOWANCE)
+        return Models.parseValues(result, Models.ALLOWANCE)
     },
     /**
      * Batch create allowances
@@ -40,7 +41,7 @@ export const Allowance = {
             message: JSON.stringify(allowances),
         }})
 
-        return r.data.map(d => Models.parseValues(d, Models.ALLOWANCE))
+        return result.data.map(d => Models.parseValues(d, Models.ALLOWANCE))
     },
     /**
      * Get allowance by address, token and spender

@@ -1,4 +1,5 @@
-import { Model } from '../library/models'
+import { $fetch } from 'ohmyfetch'
+import { Models } from '../library/models'
 import { Config } from '../library/config'
 import { Transaction } from './transaction'
 
@@ -6,7 +7,7 @@ export const Candle = {
     /**
      * Scan candles by token and interval
      */
-    scan: async (token: spender, interval: string, time?: number, sort: string = 'DESC', limit: number = 25) => {
+    scan: async (token: string, interval: string, time?: number, sort: string = 'DESC', limit: number = 25) => {
         var r = await $fetch.raw(Config.interface+'/candles', {
             method: 'GET',
             params: {token: token, interval: interval, time: time, sort: sort, limit: limit},

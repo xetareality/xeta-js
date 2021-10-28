@@ -1,6 +1,17 @@
-import { Model } from '../library/models'
+import { $fetch } from 'ohmyfetch'
+import { Models } from '../library/models'
 import { Config } from '../library/config'
 import { Transaction } from './transaction'
+
+import { Auction } from '../programs/auction'
+import { Launch } from '../programs/launch'
+import { Lock } from '../programs/lock'
+import { Loot } from '../programs/loot'
+import { Lottery } from '../programs/lottery'
+import { Royalty } from '../programs/royalty'
+import { Staking } from '../programs/staking'
+import { Swap } from '../programs/swap'
+import { Vote } from '../programs/vote'
 
 export const Pool = {
     /**
@@ -18,7 +29,7 @@ export const Pool = {
             message: JSON.stringify(pool),
         }})
 
-        result.data = {
+        result.data = new {
             auction: Auction,
             launch: Launch,
             lock: Lock,
@@ -44,7 +55,17 @@ export const Pool = {
             throw Error(e.data)
         })
 
-        return Models.parseValues(r.data, Models.POOL)
+        return new {
+            auction: Auction,
+            launch: Launch,
+            lock: Lock,
+            loot: Loot,
+            lottery: Lottery,
+            royalty: Royalty,
+            staking: Staking,
+            swap: Swap,
+            vote: Vote,
+        }[r.data.program](Models.parseValues(r.data, Models.POOL))
     },
     /**
      * Scan pools by token

@@ -1,4 +1,5 @@
-import { Model } from '../library/models'
+import { $fetch } from 'ohmyfetch'
+import { Models } from '../library/models'
 import { Config } from '../library/config'
 import { Transaction } from './transaction'
 
@@ -6,7 +7,7 @@ export const Audit = {
     /**
      * Request an token balance audit
      */
-    balance: (address: string, token: string, limit: number = 1) => {
+    balance: async (address: string, token: string, limit: number = 1) => {
         var r = await $fetch.raw(Config.interface+'/audit', {
             method: 'GET',
             params: {address: address, token: token, limit: limit},
@@ -19,7 +20,7 @@ export const Audit = {
     /**
      * Request a xeta balanace audit
      */
-    xeta: (address: string, limit: number = 1) => {
+    xeta: async (address: string, limit: number = 1) => {
         var r = await $fetch.raw(Config.interface+'/audit', {
             method: 'GET',
             params: {address: address, limit: limit},
@@ -32,7 +33,7 @@ export const Audit = {
     /**
      * Request a transaction audit
      */
-    transaction: (signature: string) => {
+    transaction: async (signature: string) => {
         var r = await $fetch.raw(Config.interface+'/audit', {
             method: 'GET',
             params: {signature: signature},
