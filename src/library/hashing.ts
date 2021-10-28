@@ -1,7 +1,7 @@
 import { Utils } from './utils'
 
 export const Hashing = {
-    transaction: async (body: any): Promise<Uint8Array> => {
+    transaction: async (body: any): Promise<string> => {
         var fields = [
             body.token,
             body.from,
@@ -11,48 +11,54 @@ export const Hashing = {
             body.message,
             body.nonce]
 
-        return await Utils.encrypt(JSON.stringify(fields.map(f => f != null ? f.toString() : f)), 'sha256')
+        var enc = await Utils.sha256(JSON.stringify(fields.map(f => f != null ? f.toString() : f)))
+        return Utils.base58encode(enc)
     },
-    allowance: async (body: any): Promise<Uint8Array> => {
+    allowance: async (body: any): Promise<string> => {
         var fields = [
             body.address,
             body.token,
             body.spender]
         
-        return await Utils.encrypt(JSON.stringify(fields.map(f => f != null ? f.toString() : f)), 'sha256')
+        var enc = await Utils.sha256(JSON.stringify(fields.map(f => f != null ? f.toString() : f)))
+        return Utils.base58encode(enc)
     },
-    claim: async (body: any): Promise<Uint8Array> => {
+    claim: async (body: any): Promise<string> => {
         var fields = [
             body.address,
             body.token,
             body.owner]
 
-        return await Utils.encrypt(JSON.stringify(fields.map(f => f != null ? f.toString() : f)), 'sha256')
+        var enc = await Utils.sha256(JSON.stringify(fields.map(f => f != null ? f.toString() : f)))
+        return Utils.base58encode(enc)
     },
-    pool: async (body: any): Promise<Uint8Array> => {
+    pool: async (body: any): Promise<string> => {
         var fields = [
             body.token,
             body.program]
 
-        return await Utils.encrypt(JSON.stringify(fields.map(f => f != null ? f.toString() : f)), 'sha256')
+        var enc = await Utils.sha256(JSON.stringify(fields.map(f => f != null ? f.toString() : f)))
+        return Utils.base58encode(enc)
     },
-    token: async (body: any): Promise<Uint8Array> => {
+    token: async (body: any): Promise<string> => {
         var fields = [
             body.name,
             body.ticker,
             body.supply]
         
-        return await Utils.encrypt(JSON.stringify(fields.map(f => f != null ? f.toString() : f)), 'sha256')
+        var enc = await Utils.sha256(JSON.stringify(fields.map(f => f != null ? f.toString() : f)))
+        return Utils.base58encode(enc)
     },
-    balance: async (body: any): Promise<Uint8Array> => {
+    balance: async (body: any): Promise<string> => {
         var fields = [
             body.address,
             body.token]
         
-        return await Utils.encrypt(JSON.stringify(fields.map(f => f != null ? f.toString() : f)), 'sha256')
+        var enc = await Utils.sha256(JSON.stringify(fields.map(f => f != null ? f.toString() : f)))
+        return Utils.base58encode(enc)
     },
     string: async (body): Promise<string> => {
-        var buf = await Utils.encrypt(body, 'sha256', true)
-        return Utils.base58encode(buf)
+        var enc = await Utils.sha256(body, true)
+        return Utils.base58encode(enc)
     },
 }

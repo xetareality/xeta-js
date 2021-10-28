@@ -31,7 +31,7 @@ export const Models = {
         if (!keys.every(k => fields.includes(k))) throw Error('input: invalid fields')
     },
     /**
-     * 
+     * Parse values
      */
     parseValues: (object: object, model: object): object => {
         if (!object) return
@@ -58,7 +58,7 @@ export const Models = {
             }))
     },
     /**
-     * 
+     * Validate formats
      */
     validFormats: (object: any, model: object): void => {
         var extended = ['pool.create', 'token.create', 'token.update', 'transaction.batch', 'token.batch', 'allowance.batch'].includes(object.function)
@@ -87,5 +87,135 @@ export const Models = {
             else if (t == 'text' && typeof v == 'string' && v.length <= 8192) return
             else throw Error('input: incorrect format for '+e[0])
         })
-    } 
+    },
+    TRANSACTION: {
+        signature: ['string'],
+        from: ['hash'],
+        to: ['hash'],
+        sender: ['hash'],
+        token: ['hash'],
+        amount: ['number'],
+        fee: ['number'],
+        nonce: ['integer'],
+        created: ['timestamp'],
+        message: ['string'],
+        function: ['string'],
+        delegate: ['boolean'],
+        error: ['string'],
+        input: ['string'],
+        outputs: ['strings'],
+        confirmed: ['timestamp'],
+        confirmations: ['integer'],
+        fromBalance: ['number'],
+        toBalance: ['number'],
+        payerBalance: ['number'],
+    },
+    BALANCE: {
+        address: ['hash'],
+        token: ['hash'],
+        amount: ['number'],
+    },
+    ALLOWANCE: {
+        hash: ['hash'],
+        token: ['hash'],
+        address: ['hash'],
+        spender: ['hash'],
+        amount: ['number'],
+        created: ['timestamp'],
+    },
+    CLAIM: {
+        hash: ['hash'],
+        address: ['hash'],
+        token: ['hash'],
+        owner: ['hash'],
+        amount: ['number'],
+        created: ['timestamp'],
+        expires: ['timestamp'],
+        unlocks: ['timestamp'],
+        answer: ['hash'],
+        number: ['number'],
+        random: ['number'],
+        frozen: ['boolean'],
+    },
+    TOKEN: {
+        address: ['hash'],
+        creator: ['hash'],
+        name: ['string'],
+        ticker: ['string'],
+        supply: ['integer'],
+        created: ['timestamp'],
+        reserve: ['integer'],
+        description: ['string'],
+        links: ['strings'],
+        object: ['string'],
+        meta: ['text'],
+        icon: ['string'],
+        mime: ['string'],
+        hash: ['string'],
+        fingerprint: ['string'],
+        cluster: ['string'],
+    },
+    POOL: {
+        address: ['hash'],
+        creator: ['hash'],
+        token: ['hash'],
+        program: ['string'],
+        created: ['timestamp'],
+        name: ['string'],
+        mechanism: ['string'],
+        candidates: ['hashes'],
+        rate: ['number'],
+        percentage: ['number'],
+        probability: ['number'],
+        expires: ['timestamp'],
+        minAmount: ['number'],
+        maxAmount: ['number'],
+        minTime: ['integer'],
+        maxTime: ['integer'],
+        transfersLimit: ['integer'],
+        claimsLimit: ['integer'],
+        tokenLimit: ['number'],
+        xetaLimit: ['number'],
+        tokenTarget: ['number'],
+        xetaTarget: ['number'],
+        xetaBalance: ['number'],
+        tokenBalance: ['number'],
+        xetaTurnover: ['number'],
+        tokenTurnover: ['number'],
+        transfersCount: ['integer'],
+        claimsCount: ['integer'],
+        answers: ['hashes'],
+        closed: ['boolean'],
+        leader: ['hash'],
+        meta: ['text'],
+    },
+    CREDENTIALS: {
+        hash: ['hash'],
+        seed: ['string'],
+        password: ['hash'],
+        'public': ['hash'],
+        'private': ['hash'],
+        created: ['timestamp'],
+    },
+    CANDLE: {
+        key: ['string'],
+        period: ['string'],
+        time: ['integer'],
+        open: ['number'],
+        high: ['number'],
+        low: ['number'],
+        close: ['number'],
+        volume: ['number'],
+        turnover: ['number'],
+        change: ['number'],
+        trades: ['integer'],
+        first: ['timestamp'],
+        last: ['timestamp'],
+    },
+    STATISTIC: {
+        key: ['string'],
+        time: ['integer'],
+        until: ['integer'],
+        value: ['number'],
+    }
 }
