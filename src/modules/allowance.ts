@@ -84,7 +84,7 @@ export const Allowance = {
     /**
      * Scan allowances by spender
      */
-    scanBySpender: async (spender: spender, hash?: string, created?: number, sort: string = 'DESC', limit: number = 25) => {
+    scanBySpender: async (spender: string, hash?: string, created?: number, sort: string = 'DESC', limit: number = 25) => {
         var r = await $fetch.raw(Config.interface+'/allowances', {
             method: 'GET',
             params: {spender: spender, hash: hash, created: created, sort: sort, limit: limit},
