@@ -23,7 +23,7 @@ export const Transaction = {
     create: async (tx) => {
         tx = Utils.strip(tx)
         Models.requiredFields(tx, ['to', 'amount'])
-        Models.exclusiveFields(tx, ['sender', 'token', 'from', 'to', 'amount', 'nonce', 'message', 'function', 'delegate'])
+        Models.exclusiveFields(tx, ['sender', 'token', 'from', 'to', 'amount', 'nonce', 'message', 'function', 'delegate', 'signature'])
         Models.validFormats(tx, Models.TRANSACTION)
         
         tx = {...Transaction.template(), ...tx}
@@ -31,8 +31,8 @@ export const Transaction = {
         if (tx.to == tx.from && tx.function != 'transaction.sponsor') throw Error('to and from cannot be equal')
         if (tx.function && tx.function != tx.function.toLowerCase()) throw Error('invalid function')
 
-        if (!Config.privateKey) return tx
-        tx.signature = await Wallet.sign(await Hashing.transaction(tx), Config.privateKey)
+        if (!tx.signature && !Config.privateKey) return tx
+        if (!tx.signature) tx.signature = await Wallet.sign(await Hashing.transaction(tx), Config.privateKey)
 
         var r = await $fetch.raw(Config.network+'/transaction', {
             method: 'POST',
@@ -83,7 +83,7 @@ export const Transaction = {
             t.signature = await Wallet.sign(await Hashing.transaction({...{sender: tx.sender, from: tx.from, amount: 1, nonce: tx.nonce}, ...t}), Config.privateKey)
         }))
 
-        var result = await Transaction.create({...Transaction.template(), ...{
+        var result = await Transaction.create({...tx, ...{
             function: 'transaction.batch',
             message: JSON.stringify(txns),
         }})

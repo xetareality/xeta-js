@@ -5,7 +5,7 @@ export const Utils = {
     /**
      * Returns a unique array
      */
-    unique: (arr: any[]): any[] => arr.filter((v, i, a) => a.indexOf(v) === i),
+    unique: (arr) => arr.filter((v, i, a) => a.indexOf(v) === i),
     /**
      * Base58 alphabet
      */

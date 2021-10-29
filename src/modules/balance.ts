@@ -21,7 +21,7 @@ export const Balance = {
      * Scan balances by address
      */
     scanByAddress: async (address: string, token?: string, amount?: number, sort: string = 'DESC', limit: number = 25) => {
-        var r = await $fetch.raw(Config.interface+'/allowances', {
+        var r = await $fetch.raw(Config.interface+'/balances', {
             method: 'GET',
             params: {address: address, token: token, amount: amount, sort: sort, limit: limit},
         }).catch(e => {
@@ -34,7 +34,7 @@ export const Balance = {
      * Scan balances by address
      */
     scanByToken: async (token: string, address?: string, amount?: number, sort: string = 'DESC', limit: number = 25) => {
-        var r = await $fetch.raw(Config.interface+'/allowances', {
+        var r = await $fetch.raw(Config.interface+'/balances', {
             method: 'GET',
             params: {token: token, address: address, amount: amount, sort: sort, limit: limit},
         }).catch(e => {

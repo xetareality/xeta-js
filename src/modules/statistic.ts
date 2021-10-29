@@ -20,7 +20,7 @@ export const Statistic = {
     /**
      * Scan statistics by key
      */
-    scanByToken: async (key: string, time?: number, sort: string = 'DESC', limit: number = 25) => {
+    scan: async (key: string, time?: number, sort: string = 'DESC', limit: number = 25) => {
         var r = await $fetch.raw(Config.interface+'/statistics', {
             method: 'GET',
             params: {key: key, time: time, sort: sort, limit: limit},

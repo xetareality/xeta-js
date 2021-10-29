@@ -31,7 +31,6 @@ export class Auction {
 
         return Transaction.create({...Transaction.template(), ...tx, ...{
             to: this.pool.address,
-            token: Config.xetaAddress,
             amount: tx.amount,
             function: 'auction.transfer',
         }})

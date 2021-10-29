@@ -44,11 +44,11 @@ export class Loot {
         Models.requiredFields(tx, ['token'])
         Models.validFormats(tx, Models.TRANSACTION)
 
-        if ([undefined, 1].includes(tx.amount)) throw Error('validation: amount must be empty or one')
+        if (tx.amount && !tx.amount.eq(1)) throw Error('validation: amount must be empty or one')
 
         return Transaction.create({...Transaction.template(), ...tx, ...{
             to: this.pool.address,
-            token: this.pool.token,
+            token: tx.token,
             amount: 1,
             function: 'loot.deposit',
         }})

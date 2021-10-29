@@ -7,13 +7,13 @@ export const Token = {
     /**
      * Create token
      */
-    create: async (token, tx) => {
+    create: async (token, tx={}) => {
         Models.requiredFields(token, ['name'])
         Models.exclusiveFields(token, ['name', 'supply', 'ticker', 'reserve', 'description', 'links', 'object', 'meta', 'icon', 'mime'])
         Models.validFormats(token, Models.TOKEN)
         Models.validFormats(tx, Models.TRANSACTION)
 
-        if (token.supply.eq(0)) throw Error('validation: supply cannot be 0')
+        if (token.supply && token.supply.lte(0)) throw Error('validation: supply cannot be 0')
         if (token.supply && !token.supply.eq(1) && !token.ticker) throw Error('validation: fungible tokens require a ticker')
 
         var result = await Transaction.create({...Transaction.template(), ...tx, ...{
@@ -43,8 +43,8 @@ export const Token = {
      * Mint from reserve
      */
     mint: async (token, tx) => {
+        Models.requiredFields(token, ['amount'])
         Models.exclusiveFields(token, ['amount'])
-        Models.validFormats(token, Models.TOKEN)
         Models.requiredFields(tx, ['token'])
         Models.validFormats(tx, Models.TRANSACTION)
 
@@ -74,7 +74,7 @@ export const Token = {
             message: JSON.stringify(tokens),
         }})
 
-        return  Models.parseValues(result, Models.TRANSACTION)
+        return Models.parseValues(result, Models.TRANSACTION)
     },
     /**
      * Get token by address

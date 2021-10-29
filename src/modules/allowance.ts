@@ -9,11 +9,12 @@ export const Allowance = {
      */
     create: async (allowance, tx) => {
         Models.requiredFields(tx, ['token'])
+        Models.validFormats(tx, Models.TRANSACTION)
         Models.requiredFields(allowance, ['spender', 'amount'])
         Models.exclusiveFields(allowance, ['spender', 'amount'])
-        Models.validFormats(allowance, Models.TRANSACTION)
+        Models.validFormats(allowance, Models.ALLOWANCE)
 
-        var result = await Transaction.create({...Transaction.template(), ...{
+        var result = await Transaction.create({...Transaction.template(), ...tx, ...{
             token: tx.token,
             function: 'allowance.create',
             message: JSON.stringify(allowance),
@@ -35,7 +36,7 @@ export const Allowance = {
             Models.validFormats(a, Models.ALLOWANCE)
         })
 
-        var result = await Transaction.create({...Transaction.template(), ...{
+        var result = await Transaction.create({...Transaction.template(), ...tx, ...{
             token: tx.token,
             function: 'allowance.batch',
             message: JSON.stringify(allowances),

@@ -55,6 +55,7 @@ export const Pool = {
             throw Error(e.data)
         })
 
+        if (!r.data) return
         return new {
             auction: Auction,
             launch: Launch,

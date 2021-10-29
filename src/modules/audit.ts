@@ -23,7 +23,7 @@ export const Audit = {
     xeta: async (address: string, limit: number = 1) => {
         var r = await $fetch.raw(Config.interface+'/audit', {
             method: 'GET',
-            params: {address: address, limit: limit},
+            params: {address: address, token: Config.xetaAddress, limit: limit},
         }).catch(e => {
             throw Error(e.data)
         })

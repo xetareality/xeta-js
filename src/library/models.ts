@@ -37,7 +37,7 @@ export const Models = {
         if (!object) return
         
         return Object.fromEntries(Object.entries(object)
-            .filter(e => Object.keys(model).includes(e[0]))
+            .filter(e => Object.keys(model).includes(e[0]) || e[0] == 'data')
             .map(e => {
                 if (e[0] == 'data') return e
 
