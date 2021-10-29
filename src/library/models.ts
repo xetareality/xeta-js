@@ -5,35 +5,35 @@ export const Models = {
     /**
      * Removes certain fields
      */
-    stripFields: (object: object, fields?: string[]): object => {
+    stripFields: (object, fields?: string[]) => {
         if (!fields || !fields.length) return object
         return Object.fromEntries(Object.entries(object).filter(e => !fields.includes(e[0])))
     },
     /**
      * Max field requirements (filter out certain fields)
      */
-    filterFields: (object: object, fields?: string[]): object => {
+    filterFields: (object, fields?: string[]) => {
         if (!fields || !fields.length) return object
         return Object.fromEntries(Object.entries(object).filter(e => fields.includes(e[0])))
     },
     /**
      * Validates required fields or throws error
      */
-    requiredFields: (object: object, fields: string[]): void => {
+    requiredFields: (object, fields: string[]): void => {
         var keys = Object.keys(object)
         if (!fields.every(f => keys.includes(f))) throw Error('input: missing fields')
     },
     /**
      * Guarantee that object contains only specified fields
      */
-    exclusiveFields: (object: object, fields: string[]): void => {
+    exclusiveFields: (object, fields: string[]): void => {
         var keys = Object.keys(object)
         if (!keys.every(k => fields.includes(k))) throw Error('input: invalid fields')
     },
     /**
      * Parse values
      */
-    parseValues: (object: object, model: object): object => {
+    parseValues: (object, model) => {
         if (!object) return
         
         return Object.fromEntries(Object.entries(object)
@@ -60,11 +60,11 @@ export const Models = {
     /**
      * Validate formats
      */
-    validFormats: (object: any, model: object): void => {
+    validFormats: (object: any, model): void => {
         var extended = ['pool.create', 'token.create', 'token.update', 'transaction.batch', 'token.batch', 'allowance.batch'].includes(object.function)
         
         Object.entries(object).forEach(e => {
-            if (!Object.keys(model).includes(e[0])) throw Error('input: object contains invalid attribute')
+            if (!Object.keys(model).includes(e[0])) throw Error('input contains invalid attribute')
 
             var t: string = model[e[0]][0]
             var v: any = e[1]

@@ -22,7 +22,10 @@ import { Vote } from './programs/vote'
 
 import { Hashing } from './library/hashing'
 import { Models } from './library/models'
+import { Utils } from './library/utils'
 import { Wallet } from './library/wallet'
+import { Config } from './library/config'
+import { connect } from './library/methods'
 
 export { 
     Address,
@@ -51,7 +54,12 @@ export {
 }
 
 export {
-    Wallet,
     Hashing,
     Models,
+    Utils,
+    Wallet,
 }
+
+// (async () => {
+// init()
+// })();

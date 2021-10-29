@@ -30,7 +30,11 @@ export const Utils = {
     /**
      * Strip kv pairs where value is null or undefined
      */
-    strip: (object: object): object => Object.fromEntries(Object.entries(object).filter(e => e[1] != null && e[1] != undefined)),
+    strip: (object, min=1) => {
+        var out = Object.fromEntries(Object.entries(object).filter(e => e[1] != null && e[1] != undefined))
+        if (Object.keys(out).length < min) throw Error('validation: missing parameters')
+        return out
+    },
     /**
      * Returns global var
      */

@@ -1,6 +1,8 @@
 import babel from '@rollup/plugin-babel';
 import resolve from '@rollup/plugin-node-resolve';
-import { terser } from "rollup-plugin-terser";
+import commonjs from 'rollup-plugin-commonjs';
+import { terser } from 'rollup-plugin-terser';
+// import nodePolyfills from 'rollup-plugin-node-polyfills'
 
 const extensions = ['.js', '.ts'];
 
@@ -16,7 +18,8 @@ export default  {
       file: 'dist/bundles/bundle.esm.min.js',
       format: 'esm',
       plugins: [terser()],
-      sourcemap: true
+      sourcemap: true,
+      intro: 'const global = window;'
     },
     {
       file: 'dist/bundles/bundle.umd.js',
@@ -34,6 +37,12 @@ export default  {
   ],
   plugins: [
     resolve({ extensions }),
-    babel({babelHelpers: 'bundled', include: ['src/**/*.ts'], extensions, exclude: './node_modules/**'})
+    babel({babelHelpers: 'runtime', include: ['src/**/*.ts'], extensions, exclude: './node_modules/**'}),
+    commonjs({
+      include: 'node_modules/**',
+      namedExports: {
+        'node_modules/js-sha256/src/sha256.js': ['sha256']
+      }}),
+    // nodePolyfills()
   ]
 }
