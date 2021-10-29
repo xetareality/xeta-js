@@ -1,65 +1,63 @@
 import { $fetch } from 'ohmyfetch'
 import { Models } from '../library/models'
 import { Config } from '../library/config'
+import { Utils } from '../library/utils'
 import { Transaction } from './transaction'
 
 export const Token = {
     /**
      * Create token
      */
-    create: async (token, tx={}) => {
-        Models.requiredFields(token, ['name'])
-        Models.exclusiveFields(token, ['name', 'supply', 'ticker', 'reserve', 'description', 'links', 'object', 'meta', 'icon', 'mime'])
-        Models.validFormats(token, Models.TOKEN)
-        Models.validFormats(tx, Models.TRANSACTION)
+    create: async ({name, supply=null, ticker=null, reserve=null, description=null, links=null, object=null, meta=null, icon=null, mime=null}, tx={}) => {
+        if (parseInt(supply) == 0) throw Error('validation: supply cannot be 0')
+        if (supply && parseInt(supply) != 1 && !ticker) throw Error('validation: fungible tokens require a ticker')
 
-        if (token.supply && token.supply.lte(0)) throw Error('validation: supply cannot be 0')
-        if (token.supply && !token.supply.eq(1) && !token.ticker) throw Error('validation: fungible tokens require a ticker')
-
-        var result = await Transaction.create({...Transaction.template(), ...tx, ...{
+        return Transaction.create({...tx, ...{
             function: 'token.create',
-            message: JSON.stringify(token),
+            message: JSON.stringify(Utils.strip({
+                name: name,
+                supply: supply,
+                ticker: ticker,
+                reserve: reserve,
+                description: description,
+                links: links,
+                object: object,
+                meta: meta,
+                icon: icon,
+                mime: mime,
+            })),
         }})
-
-        return Models.parseValues(result, Models.TRANSACTION)
     },
     /**
      * Update specified values of an token
      */
-    update: async (token, tx) => {
-        Models.exclusiveFields(token, ['description', 'links', 'meta', 'icon'])
-        Models.validFormats(token, Models.TOKEN)
-        Models.requiredFields(tx, ['token'])
-        Models.validFormats(tx, Models.TRANSACTION)
-
-        var result = await Transaction.create({...Transaction.template(), ...tx, ...{
+    update: async ({token, description=null, links=null, meta=null, icon=null}, tx={}) => {
+        return Transaction.create({...tx, ...{
+            token: token,
             function: 'token.update',
-            message: JSON.stringify(token),
+            message: JSON.stringify(Utils.strip({
+                description: description,
+                links: links,
+                meta: meta,
+                icon: icon,
+            })),
         }})
-
-        return Models.parseValues(result, Models.TRANSACTION)
     },
     /**
      * Mint from reserve
      */
-    mint: async (token, tx) => {
-        Models.requiredFields(token, ['amount'])
-        Models.exclusiveFields(token, ['amount'])
-        Models.requiredFields(tx, ['token'])
-        Models.validFormats(tx, Models.TRANSACTION)
-
-        var result = await Transaction.create({...Transaction.template(), ...tx, ...{
+    mint: async ({token, amount}, tx={}) => {
+        return Transaction.create({...tx, ...{
+            token: token,
             function: 'token.mint',
-            message: JSON.stringify(token),
+            message: JSON.stringify({amount: amount}),
         }})
-
-        return Models.parseValues(result, Models.TRANSACTION)
     },
     /**
      * Batch create NFTs
      * Fungible tokens cannot be created in batch due to swap pool creation
      */
-    batch: async (tokens) => {
+    batch: async ({tokens}) => {
         if (tokens.length > 8) throw Error('input: batch exceeds maximum items')
         if (tokens.some(t => ![undefined, 1].includes(t.supply))) throw Error('validation: function only supports non-fungible tokens')
 
@@ -69,76 +67,64 @@ export const Token = {
             Models.validFormats(t, Models.TOKEN)
         })
 
-        var result = await Transaction.create({...Transaction.template(), ...{
+        return Transaction.create({
             function: 'token.batch',
             message: JSON.stringify(tokens),
-        }})
-
-        return Models.parseValues(result, Models.TRANSACTION)
+        })
     },
     /**
      * Get token by address
      */
-    get: async (address: string) => {
-        var r = await $fetch.raw(Config.interface+'/token', {
+    get: async ({address}) => {
+        return Models.parseValues(await $fetch(Config.interface+'/token', {
             method: 'GET',
             params: {address: address},
         }).catch(e => {
             throw Error(e.data)
-        })
-
-        return Models.parseValues(r.data, Models.TOKEN)
+        }), Models.TOKEN)
     },
     /**
      * Batch get tokens by addresses
      */
-    batchGet: async (addresses: string[]) => {
-        var r = await $fetch.raw(Config.interface+'/tokens', {
+    batchGet: async ({addresses}) => {
+        return (await $fetch(Config.interface+'/tokens', {
             method: 'GET',
             params: {addresses: addresses.join(',')},
         }).catch(e => {
             throw Error(e.data)
-        })
-
-        return r.data.map(d => Models.parseValues(d, Models.TOKEN))
+        })).map(t => Models.parseValues(t, Models.TOKEN))
     },
     /**
      * Scan tokens by creator
      */
-    scanByCreator: async (creator: string, address?: string, created?: number, sort: string = 'DESC', limit: number = 25) => {
-        var r = await $fetch.raw(Config.interface+'/tokens', {
+    scanByCreator: async ({creator, address=null, created=null, sort='DESC', limit=25}) => {
+        return (await $fetch(Config.interface+'/tokens', {
             method: 'GET',
-            params: {creator: creator, address: address, created: created, sort: sort, limit: limit},
+            params: Utils.strip({creator: creator, address: address, created: created, sort: sort, limit: limit}),
         }).catch(e => {
             throw Error(e.data)
-        })
-
-        return r.data.map(d => Models.parseValues(d, Models.TOKEN))
+        })).map(t => Models.parseValues(t, Models.TOKEN))
     },
     /**
      * Scan tokens by ticker
      */
-    scanByTicker: async (ticker: string, address?: string, created?: number, sort: string = 'DESC', limit: number = 25) => {
-        var r = await $fetch.raw(Config.interface+'/tokens', {
+    scanByTicker: async ({ticker, address=null, created=null, sort='DESC', limit=25}) => {
+        return (await $fetch(Config.interface+'/tokens', {
             method: 'GET',
-            params: {ticker: ticker, address: address, created: created, sort: sort, limit: limit},
+            params: Utils.strip({ticker: ticker, address: address, created: created, sort: sort, limit: limit}),
         }).catch(e => {
             throw Error(e.data)
-        })
-
-        return r.data.map(d => Models.parseValues(d, Models.TOKEN))
+        })).map(t => Models.parseValues(t, Models.TOKEN))
     },
     /**
      * Scan tokens by name
      */
-    scanByName: async (name: string, address?: string, created?: number, sort: string = 'DESC', limit: number = 25) => {
-        var r = await $fetch.raw(Config.interface+'/tokens', {
+    scanByName: async ({name, address=null, created=null, sort='DESC', limit=25}) => {
+        return (await $fetch(Config.interface+'/tokens', {
             method: 'GET',
-            params: {name: name, address: address, created: created, sort: sort, limit: limit},
+            params: Utils.strip({name: name, address: address, created: created, sort: sort, limit: limit}),
         }).catch(e => {
             throw Error(e.data)
-        })
-
-        return r.data.map(d => Models.parseValues(d, Models.TOKEN))
+        })).map(t => Models.parseValues(t, Models.TOKEN))
     },
 }

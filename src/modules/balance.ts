@@ -1,46 +1,41 @@
 import { $fetch } from 'ohmyfetch'
 import { Models } from '../library/models'
 import { Config } from '../library/config'
+import { Utils } from '../library/utils'
 import { Transaction } from './transaction'
 
 export const Balance = {
     /**
      * Get balance by address and token
      */
-    get: async (address: string, token: string) => {
-        var r = await $fetch.raw(Config.interface+'/balance', {
+    get: async ({address, token}) => {
+        return Models.parseValues(await $fetch(Config.interface+'/balance', {
             method: 'GET',
             params: {address: address, token: token},
         }).catch(e => {
             throw Error(e.data)
-        })
-
-        return Models.parseValues(r.data, Models.BALANCE)
+        }), Models.BALANCE)
     },
     /**
      * Scan balances by address
      */
-    scanByAddress: async (address: string, token?: string, amount?: number, sort: string = 'DESC', limit: number = 25) => {
-        var r = await $fetch.raw(Config.interface+'/balances', {
+    scanByAddress: async ({address, token=null, amount=null, sort='DESC', limit=25}) => {
+        return (await $fetch(Config.interface+'/balances', {
             method: 'GET',
-            params: {address: address, token: token, amount: amount, sort: sort, limit: limit},
+            params: Utils.strip({address: address, token: token, amount: amount, sort: sort, limit: limit}),
         }).catch(e => {
             throw Error(e.data)
-        })
-
-        return r.data.map(d => Models.parseValues(d, Models.BALANCE))
+        })).map(d => Models.parseValues(d, Models.BALANCE))
     },
     /**
      * Scan balances by address
      */
-    scanByToken: async (token: string, address?: string, amount?: number, sort: string = 'DESC', limit: number = 25) => {
-        var r = await $fetch.raw(Config.interface+'/balances', {
+    scanByToken: async ({token, address=null, amount=null, sort='DESC', limit=25}) => {
+        return (await $fetch(Config.interface+'/balances', {
             method: 'GET',
-            params: {token: token, address: address, amount: amount, sort: sort, limit: limit},
+            params: Utils.strip({token: token, address: address, amount: amount, sort: sort, limit: limit}),
         }).catch(e => {
             throw Error(e.data)
-        })
-
-        return r.data.map(d => Models.parseValues(d, Models.BALANCE))
+        })).map(d => Models.parseValues(d, Models.BALANCE))
     },
 }

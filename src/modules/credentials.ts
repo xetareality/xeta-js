@@ -1,60 +1,45 @@
 import { $fetch } from 'ohmyfetch'
 import { Models } from '../library/models'
 import { Config } from '../library/config'
-import { Transaction } from './transaction'
 import { Hashing } from '../library/hashing'
+import { Utils } from '../library/utils'
+import { Transaction } from './transaction'
 
 export const Credentials = {
     /**
      * Get address data (account & balance)
      */
-    get: async (seed: string, password: string, unsafe: boolean = false) => {
-        var credentials = {seed: seed, password: await Hashing.string(password)}
-        Models.validFormats(credentials, Models.CREDENTIALS)
-
-        var r = await $fetch.raw(Config.interface+'/credentials', {
+    get: async ({seed, password, unsafe=null}) => {
+        return Models.parseValues(await $fetch(Config.interface+'/credentials', {
             method: 'GET',
-            params: {...credentials, ...(unsafe ? {unsafe: 1} : {})},
+            params: Utils.strip({seed: seed, password: await Hashing.string(password), unsafe: unsafe}),
         }).catch(e => {
             throw Error(e.data)
-        })
-
-        return Models.parseValues(r.data, Models.CREDENTIALS)
+        }), Models.CREDENTIALS)
     },
     /**
      * Create credentials
      */
-    create: async(seed: string, password: string) => {
-        var credentials = {seed: seed, password: await Hashing.string(password)}
-        Models.validFormats(credentials, Models.CREDENTIALS)
-
-        var r = await $fetch.raw(Config.interface+'/credentials', {
+    create: async({seed, password}) => {
+        return Models.parseValues(await $fetch(Config.interface+'/credentials', {
             method: 'POST',
-            body: credentials,
+            body: {seed: seed, password: await Hashing.string(password)},
         }).catch(e => {
             throw Error(e.data)
-        })
-
-        return Models.parseValues(r.data, Models.CREDENTIALS)
+        }), Models.CREDENTIALS)
     },
     /**
      * Sign transaction with managed credentials
      * Return transaction with signature
      */
-    sign: async (tx, seed: string, password: string) => {
-        var credentials = {seed: seed, password: await Hashing.string(password)}
-        Models.requiredFields(credentials, ['seed', 'password'])
-        Models.exclusiveFields(credentials, ['seed', 'password'])
-        Models.validFormats(credentials, Models.CREDENTIALS)
+    sign: async ({seed, password}, tx={}) => {
         Models.validFormats(tx, Models.TRANSACTION)
 
-        var r = await $fetch.raw(Config.interface+'/sign', {
+        return Models.parseValues(await $fetch(Config.interface+'/sign', {
             method: 'POST',
-            body: {...credentials, ...{transaction: JSON.stringify(tx)}},
+            body: {seed: seed, password: await Hashing.string(password), transaction: JSON.stringify(tx)},
         }).catch(e => {
             throw Error(e.data)
-        })
-
-        return Models.parseValues(r.data, Models.TRANSACTION)
+        }), Models.TRANSACTION)
     }
 }
