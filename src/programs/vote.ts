@@ -12,7 +12,7 @@ export class Vote {
     static create(pool) {
         Models.requiredFields(pool, ['token'])
         Models.validFormats(pool, Models.POOL)
-        return Pool.create({...pool, ...{program: 'vote'}}, {token: pool.token})
+        return Pool.create({...pool, ...{program: 'vote'}})
     }
 
     /**
@@ -25,26 +25,23 @@ export class Vote {
     /**
      * Transfer to vote pool
      */
-    transfer(tx, answer?: string, number?: number) {
-        Models.requiredFields(tx, ['amount'])
-        Models.validFormats(tx, Models.TRANSACTION)
-
+    transfer({amount, answer=null, number=null}, tx={}) {
         if ((this.pool.candidates && !answer) || (this.pool.candidates && number)) throw Error('validation: incorrect answer')
 
-        return Transaction.create({...Transaction.template(), ...tx, ...{
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             token: this.pool.token,
-            amount: tx.amount,
+            amount: amount,
             function: 'vote.transfer',
-            message: answer ? JSON.stringify({answer: answer}) : number ? JSON.stringify({number: number}) : null,
+            message: JSON.stringify({answer: answer, number: number}),
         }})
     }
 
     /**
      * Claim from vote pool
      */
-    claim() {
-        return Transaction.create({...Transaction.template(), ...{
+    claim(tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             function: 'vote.claim',
         }})
@@ -53,8 +50,8 @@ export class Vote {
     /**
      * Resolve vote pool
      */
-    resolve() {
-        return Transaction.create({...Transaction.template(), ...{
+    resolve(tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             function: 'vote.resolve',
         }})

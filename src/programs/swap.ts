@@ -17,14 +17,11 @@ export class Swap {
     /**
      * Transfer to swap pool
      */
-    transfer(tx) {
-        Models.requiredFields(tx, ['amount', 'token'])
-        Models.validFormats(tx, Models.TRANSACTION)
-
-        return Transaction.create({...Transaction.template(), ...tx, ...{
+    transfer({token, amount}, tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
-            token: tx.token,
-            amount: tx.amount,
+            token: token,
+            amount: amount,
             function: 'swap.transfer',
         }})
     }
@@ -32,14 +29,11 @@ export class Swap {
     /**
      * Deposit to swap pool
      */
-    deposit(tx, expires?: number, unlocks?: number) {
-        Models.requiredFields(tx, ['amount', 'token'])
-        Models.validFormats(tx, Models.TRANSACTION)
-
-        return Transaction.create({...Transaction.template(), ...tx, ...{
+    deposit({token, amount, expires=null, unlocks=null}, tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
-            token: tx.token,
-            amount: tx.amount,
+            token: token,
+            amount: amount,
             function: 'swap.deposit',
             message: expires || unlocks ? JSON.stringify(Utils.strip({expires: expires, unlocks: unlocks})) : null,
         }})
@@ -48,8 +42,8 @@ export class Swap {
     /**
      * Supply to swap pool
      */
-    supply() {
-        return Transaction.create({...Transaction.template(), ...{
+    supply(tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             function: 'swap.supply',
         }})
@@ -58,13 +52,13 @@ export class Swap {
     /**
      * Withdraw from swap pool
      */
-    withdraw(percentage: number = 1.0) {
+    withdraw({percentage=1}) {
         if (percentage > 1) throw Error('input: percentage must between zero and one')
 
-        return Transaction.create({...Transaction.template(), ...{
+        return Transaction.create({
             to: this.pool.address,
             function: 'swap.withdraw',
             message: JSON.stringify({percentage: percentage})
-        }})
+        })
     }
 }

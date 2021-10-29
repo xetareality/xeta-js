@@ -12,7 +12,7 @@ export class Launch {
     static create(pool) {
         Models.requiredFields(pool, ['token', 'expires'])
         Models.validFormats(pool, Models.POOL)
-        return Pool.create({...pool, ...{program: 'launch'}}, {token: pool.token})
+        return Pool.create({...pool, ...{program: 'launch'}})
     }
 
     /**
@@ -25,13 +25,10 @@ export class Launch {
     /**
      * Transfer to launch pool
      */
-    transfer(tx) {
-        Models.requiredFields(tx, ['amount'])
-        Models.validFormats(tx, Models.TRANSACTION)
-
-        return Transaction.create({...Transaction.template(), ...tx, ...{
+    transfer({amount}, tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
-            amount: tx.amount,
+            amount: amount,
             function: 'launch.transfer',
         }})
     }
@@ -39,13 +36,10 @@ export class Launch {
     /**
      * Swap via launch pool
      */
-    swap(tx) {
-        Models.requiredFields(tx, ['amount'])
-        Models.validFormats(tx, Models.TRANSACTION)
-
-        return Transaction.create({...Transaction.template(), ...tx, ...{
+    swap({amount}, tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
-            amount: tx.amount,
+            amount: amount,
             function: 'launch.swap',
         }})
     }
@@ -53,8 +47,8 @@ export class Launch {
     /**
      * Resolve launch pool
      */
-    resolve() {
-        return Transaction.create({...Transaction.template(), ...{
+    resolve(tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             function: 'launch.resolve',
         }})
@@ -63,8 +57,8 @@ export class Launch {
     /**
      * Claim from launch pool
      */
-    claim() {
-        return Transaction.create({...Transaction.template(), ...{
+    claim(tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             function: 'launch.claim',
         }})
@@ -73,11 +67,11 @@ export class Launch {
     /**
      * Deposit to launch pool
      */
-    deposit(tx) {
-        return Transaction.create({...Transaction.template(), ...tx, ...{
+    deposit({amount}, tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             token: this.pool.token,
-            amount: tx.amount,
+            amount: amount,
             function: 'launch.deposit',
         }})
     }
@@ -85,8 +79,8 @@ export class Launch {
     /**
      * Withdraw from launch pool
      */
-    withdraw() {
-        return Transaction.create({...Transaction.template(), ...{
+    withdraw(tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             function: 'launch.withdraw',
         }})
@@ -95,8 +89,8 @@ export class Launch {
     /**
      * Close launch pool
      */
-    close() {
-        return Transaction.create({...Transaction.template(), ...{
+    close(tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             function: 'launch.close',
         }})

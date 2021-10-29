@@ -13,7 +13,7 @@ export class Royalty {
     static create(pool) {
         Models.requiredFields(pool, ['token'])
         Models.validFormats(pool, Models.POOL)
-        return Pool.create({...pool, ...{program: 'royalty'}}, {token: pool.token})
+        return Pool.create({...pool, ...{program: 'royalty'}})
     }
 
     /**
@@ -26,20 +26,17 @@ export class Royalty {
     /**
      * Transfer to royalty pool
      */
-    transfer(tx) {
-        this.claim(tx)
+    transfer({token}, tx={}) {
+        this.claim({token}, tx)
     }
 
     /**
      * Claim from royalty pool
      */
-    claim(tx) {
-        Models.requiredFields(tx, ['amount'])
-        Models.validFormats(tx, Models.TRANSACTION)
-
-        return Transaction.create({...Transaction.template(), ...tx, ...{
+    claim({token}, tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
-            token: tx.token,
+            token: token,
             function: 'royalty.claim',
         }})
     }
@@ -47,14 +44,11 @@ export class Royalty {
     /**
      * Deposit to royalty pool
      */
-    deposit(tx, expires?: number, unlocks?: number) {
-        Models.requiredFields(tx, ['amount'])
-        Models.validFormats(tx, Models.TRANSACTION)
-
-        return Transaction.create({...Transaction.template(), ...tx, ...{
+    deposit({amount, expires=null, unlocks=null}, tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             token: this.pool.token,
-            amount: tx.amount,
+            amount: amount,
             function: 'royalty.deposit',
             message: expires || unlocks ? JSON.stringify(Utils.strip({expires: expires, unlocks: unlocks})) : null,
         }})
@@ -63,8 +57,8 @@ export class Royalty {
     /**
      * Withdraw from royalty pool
      */
-    withdraw() {
-        return Transaction.create({...Transaction.template(), ...{
+    withdraw(tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             function: 'royalty.withdraw',
         }})
@@ -73,8 +67,8 @@ export class Royalty {
     /**
      * Close royalty pool
      */
-    close() {
-        return Transaction.create({...Transaction.template(), ...{
+    close(tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             function: 'royalty.close',
         }})

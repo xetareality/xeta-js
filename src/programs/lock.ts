@@ -13,7 +13,7 @@ export class Lock {
     static create(pool) {
         Models.requiredFields(pool, ['token'])
         Models.validFormats(pool, Models.POOL)
-        return Pool.create({...pool, ...{program: 'lock'}}, {token: pool.token})
+        return Pool.create({...pool, ...{program: 'lock'}})
     }
 
     /**
@@ -26,14 +26,11 @@ export class Lock {
     /**
      * Transfer to lock pool
      */
-    transfer(tx, expires?: number, unlocks?: number, address?: string) {
-        Models.requiredFields(tx, ['amount'])
-        Models.validFormats(tx, Models.TRANSACTION)
-
-        return Transaction.create({...Transaction.template(), ...tx, ...{
+    transfer({amount, expires=null, unlocks=null, address=null}, tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             token: this.pool.token,
-            amount: tx.amount,
+            amount: amount,
             function: 'lock.transfer',
             message: expires || unlocks || address ? JSON.stringify(Utils.strip({expires: expires, unlocks: unlocks, address: address})) : null,
         }})
@@ -42,8 +39,8 @@ export class Lock {
     /**
      * Claim from lock pool
      */
-    claim() {
-        return Transaction.create({...Transaction.template(), ...{
+    claim(tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             function: 'lock.claim',
         }})

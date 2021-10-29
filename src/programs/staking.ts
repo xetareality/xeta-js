@@ -13,7 +13,7 @@ export class Staking {
     static create(pool) {
         Models.requiredFields(pool, ['token'])
         Models.validFormats(pool, Models.POOL)
-        return Pool.create({...pool, ...{program: 'staking'}}, {token: pool.token})
+        return Pool.create({...pool, ...{program: 'staking'}})
     }
 
     /**
@@ -26,16 +26,13 @@ export class Staking {
     /**
      * Transfer to staking pool
      */
-    transfer(tx, expires?: number, unlocks?: number) {
-        Models.requiredFields(tx, ['amount'])
-        Models.validFormats(tx, Models.TRANSACTION)
-
+    transfer({amount, expires=null, unlocks=null}, tx={}) {
         if (unlocks && unlocks < Date.now()+24*60*60*1000) throw Error('validation: below minimum time')
 
-        return Transaction.create({...Transaction.template(), ...tx, ...{
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             token: this.pool.token,
-            amount: tx.amount,
+            amount: amount,
             function: 'staking.transfer',
             message: expires || unlocks ? JSON.stringify(Utils.strip({expires: expires, unlocks: unlocks})) : null,
         }})
@@ -44,8 +41,8 @@ export class Staking {
     /**
      * Claim from staking pool
      */
-    claim() {
-        return Transaction.create({...Transaction.template(), ...{
+    claim(tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             function: 'staking.claim',
         }})
@@ -54,14 +51,11 @@ export class Staking {
     /**
      * Deposit to staking pool
      */
-    deposit(tx, expires?: number, unlocks?: number) {
-        Models.requiredFields(tx, ['amount'])
-        Models.validFormats(tx, Models.TRANSACTION)
-
-        return Transaction.create({...Transaction.template(), ...tx, ...{
+    deposit({amount, expires=null, unlocks=null}, tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             token: this.pool.token,
-            amount: tx.amount,
+            amount: amount,
             function: 'staking.deposit',
             message: expires || unlocks ? JSON.stringify(Utils.strip({expires: expires, unlocks: unlocks})) : null,
         }})
@@ -70,8 +64,8 @@ export class Staking {
     /**
      * Withdraw from staking pool
      */
-    withdraw() {
-        return Transaction.create({...Transaction.template(), ...{
+    withdraw(tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             function: 'staking.withdraw',
         }})

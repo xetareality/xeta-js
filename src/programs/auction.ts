@@ -12,7 +12,7 @@ export class Auction {
     static create(pool) {
         Models.requiredFields(pool, ['token', 'expires'])
         Models.validFormats(pool, Models.POOL)
-        return Pool.create({...pool, ...{program: 'auction'}}, {token: pool.token})
+        return Pool.create({...pool, ...{program: 'auction'}})
     }
 
     /**
@@ -25,13 +25,10 @@ export class Auction {
     /**
      * Transfer to auction pool
      */
-    transfer(tx) {
-        Models.requiredFields(tx, ['amount'])
-        Models.validFormats(tx, Models.TRANSACTION)
-
-        return Transaction.create({...Transaction.template(), ...tx, ...{
+    transfer({amount}, tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
-            amount: tx.amount,
+            amount: amount,
             function: 'auction.transfer',
         }})
     }
@@ -39,14 +36,11 @@ export class Auction {
     /**
      * Deposit to auction pool
      */
-    deposit(tx) {
-        Models.requiredFields(tx, ['amount'])
-        Models.validFormats(tx, Models.TRANSACTION)
-
-        return Transaction.create({...Transaction.template(), ...tx, ...{
+    deposit({amount}, tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             token: this.pool.token,
-            amount: tx.amount,
+            amount: amount,
             function: 'auction.deposit',
         }})
     }
@@ -54,11 +48,9 @@ export class Auction {
     /**
      * Resolve auction pool
      */
-    resolve() {
-        return Transaction.create({...Transaction.template(), ...{
+    resolve(tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
-            token: Config.xetaAddress,
-            amount: 0,
             function: 'auction.resolve',
         }})
     }
@@ -66,11 +58,9 @@ export class Auction {
     /**
      * Cancel auction pool
      */
-    cancel() {
-        return Transaction.create({...Transaction.template(), ...{
+    cancel(tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
-            token: Config.xetaAddress,
-            amount: 0,
             function: 'auction.cancel',
         }})
     }
@@ -78,11 +68,9 @@ export class Auction {
     /**
      * Close auction pool
      */
-    close() {
-        return Transaction.create({...Transaction.template(), ...{
+    close(tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
-            token: Config.xetaAddress,
-            amount: 0,
             function: 'auction.close',
         }})
     }

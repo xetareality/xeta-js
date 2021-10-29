@@ -12,7 +12,7 @@ export class Lottery {
     static create(pool) {
         Models.requiredFields(pool, ['token', 'expires'])
         Models.validFormats(pool, Models.POOL)
-        return Pool.create({...pool, ...{program: 'lottery'}}, {token: pool.token})
+        return Pool.create({...pool, ...{program: 'lottery'}})
     }
 
     /**
@@ -25,13 +25,10 @@ export class Lottery {
     /**
      * Transfer to lottery pool
      */
-    transfer(tx) {
-        Models.requiredFields(tx, ['amount'])
-        Models.validFormats(tx, Models.TRANSACTION)
-
-        return Transaction.create({...Transaction.template(), ...tx, ...{
+    transfer({amount}, tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
-            amount: tx.amount,
+            amount: amount,
             function: 'lottery.transfer',
         }})
     }
@@ -39,8 +36,8 @@ export class Lottery {
     /**
      * Claim from lottery pool
      */
-    claim() {
-        return Transaction.create({...Transaction.template(), ...{
+    claim(tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             function: 'lottery.claim',
         }})
@@ -49,14 +46,11 @@ export class Lottery {
     /**
      * Deposit to lottery pool
      */
-    deposit(tx) {
-        Models.requiredFields(tx, ['amount'])
-        Models.validFormats(tx, Models.TRANSACTION)
-
-        return Transaction.create({...Transaction.template(), ...tx, ...{
+    deposit({amount}, tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             token: this.pool.token,
-            amount: tx.amount,
+            amount: amount,
             function: 'lottery.deposit',
         }})
     }
@@ -64,8 +58,8 @@ export class Lottery {
     /**
      * Withdraw from lottery pool
      */
-    withdraw() {
-        return Transaction.create({...Transaction.template(), ...{
+    withdraw(tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             function: 'lottery.withdraw',
         }})
@@ -74,8 +68,8 @@ export class Lottery {
     /**
      * Close lottery pool
      */
-    close() {
-        return Transaction.create({...Transaction.template(), ...{
+    close(tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             function: 'lottery.close',
         }})
@@ -84,8 +78,8 @@ export class Lottery {
     /**
      * Clear lottery pool
      */
-    clear() {
-        return Transaction.create({...Transaction.template(), ...{
+    clear(tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             function: 'lottery.clear',
         }})

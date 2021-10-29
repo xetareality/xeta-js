@@ -12,7 +12,7 @@ export class Loot {
     static create(pool) {
         Models.requiredFields(pool, ['token'])
         Models.validFormats(pool, Models.POOL)
-        return Pool.create({...pool, ...{program: 'loot'}}, {token: pool.token})
+        return Pool.create({...pool, ...{program: 'loot'}})
     }
 
     /**
@@ -25,14 +25,11 @@ export class Loot {
     /**
      * Transfer to loot pool
      */
-    transfer(tx) {
-        Models.requiredFields(tx, ['amount'])
-        Models.validFormats(tx, Models.TRANSACTION)
-
-        return Transaction.create({...Transaction.template(), ...tx, ...{
+    transfer({amount}, tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             token: this.pool.token,
-            amount: tx.amount,
+            amount: amount,
             function: 'loot.transfer',
         }})
     }
@@ -40,16 +37,13 @@ export class Loot {
     /**
      * Deposit to loot pool
      */
-    deposit(tx) {
-        Models.requiredFields(tx, ['token'])
-        Models.validFormats(tx, Models.TRANSACTION)
+    deposit({token, amount=1}, tx={}) {
+        if (amount != 1) throw Error('validation: function only supports non-fungible tokens')
 
-        if (tx.amount && !tx.amount.eq(1)) throw Error('validation: amount must be empty or one')
-
-        return Transaction.create({...Transaction.template(), ...tx, ...{
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
-            token: tx.token,
-            amount: 1,
+            token: token,
+            amount: amount,
             function: 'loot.deposit',
         }})
     }
@@ -57,13 +51,10 @@ export class Loot {
     /**
      * Withdraw from loot pool
      */
-    withdraw(tx) {
-        Models.requiredFields(tx, ['token'])
-        Models.validFormats(tx, Models.TRANSACTION)
-
-        return Transaction.create({...Transaction.template(), ...tx, ...{
+    withdraw({token}, tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
-            token: tx.token,
+            token: token,
             function: 'loot.withdraw',
         }})
     }
@@ -71,8 +62,8 @@ export class Loot {
     /**
      * Clear loot pool
      */
-    clear() {
-        return Transaction.create({...Transaction.template(), ...{
+    clear(tx={}) {
+        return Transaction.create({...tx, ...{
             to: this.pool.address,
             function: 'loot.clear',
         }})
