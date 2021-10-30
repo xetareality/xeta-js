@@ -10,13 +10,7 @@ module.exports = {
     esmBundled: {
       ...shared,
       presets: [['@babel/env', {
-        targets: "> 0.25%, not dead"
-      }], ...sharedPresets],
-    },
-    esmBundled: {
-      ...shared,
-      presets: [['@babel/env', {
-        targets: "> 0.25%, not dead",
+        targets: '> 0.25%, not dead',
       }], ...sharedPresets],
       plugins: [
         ['@babel/plugin-transform-runtime', {
@@ -27,8 +21,13 @@ module.exports = {
     cjs: {
       ...shared,
       presets: [['@babel/env', {
-        modules: 'commonjs'
+        modules: 'commonjs',
       }], ...sharedPresets],
+      plugins: [
+        ['@babel/plugin-transform-runtime', {
+          regenerator: true
+        }]
+      ]
     },
     test: {
       presets: ['@babel/env', ...sharedPresets]    

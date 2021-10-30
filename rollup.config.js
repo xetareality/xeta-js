@@ -2,7 +2,6 @@ import babel from '@rollup/plugin-babel';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import { terser } from 'rollup-plugin-terser';
-// import nodePolyfills from 'rollup-plugin-node-polyfills'
 
 const extensions = ['.js', '.ts'];
 
@@ -43,6 +42,5 @@ export default  {
       namedExports: {
         'node_modules/js-sha256/src/sha256.js': ['sha256']
       }}),
-    // nodePolyfills()
   ]
 }

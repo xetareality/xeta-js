@@ -27,39 +27,44 @@ import { Wallet } from './library/wallet'
 import { Config } from './library/config'
 import { connect } from './library/methods'
 
-export { 
-    Address,
-    Allowance,
-    Audit,
-    Balance,
-    Candle,
-    Claim,
-    Credentials,
-    Pool,
-    Statistic,
-    Token,
-    Transaction,
+const Xeta = {
+    /**
+     * Modules
+     */
+    address: Address,
+    allowance: Allowance,
+    audit: Audit,
+    balance: Balance,
+    candle: Candle,
+    claim: Claim,
+    credentials: Credentials,
+    pool: Pool,
+    statistic: Statistic,
+    token: Token,
+    transaction: Transaction,
+
+    /**
+     * Programs
+     */
+    auction: Auction,
+    launch: Launch,
+    lock: Lock,
+    loot: Loot,
+    lottery: Lottery,
+    royalty: Royalty,
+    staking: Staking,
+    swap: Swap,
+    vote: Vote,
+
+    /**
+     * Library
+     */
+    hashing: Hashing,
+    models: Models,
+    utils: Utils,
+    wallet: Wallet,
+    config: Config,
+    connect: connect,
 }
 
-export { 
-    Auction,
-    Launch,
-    Lock,
-    Loot,
-    Lottery,
-    Royalty,
-    Staking,
-    Swap,
-    Vote,
-}
-
-export {
-    Hashing,
-    Models,
-    Utils,
-    Wallet,
-}
-
-// (async () => {
-// init()
-// })();
+export default Xeta
