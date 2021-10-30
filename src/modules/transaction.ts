@@ -69,7 +69,7 @@ export const Transaction = {
     /**
      * Batch create NFTs
      */
-    batchNft: async ({transactions}, tx={}) => {
+    batchNft: async ({transactions}, tx: any = {}) => {
         tx = {...Transaction.template(), ...tx}
 
         await Promise.all(transactions.map(async (t) => {

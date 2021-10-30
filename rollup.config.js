@@ -9,25 +9,25 @@ export default  {
   input: 'src/index.ts',
   output: [
     {
-      file: 'dist/bundles/bundle.esm.js',
+      file: 'dist/bundles/xeta.esm.js',
       format: 'esm',
       sourcemap: true
     },
     {
-      file: 'dist/bundles/bundle.esm.min.js',
+      file: 'dist/bundles/xeta.esm.min.js',
       format: 'esm',
       plugins: [terser()],
       sourcemap: true,
       intro: 'const global = window;'
     },
     {
-      file: 'dist/bundles/bundle.umd.js',
+      file: 'dist/bundles/xeta.umd.js',
       format: 'umd',
       name: 'Xeta',
       sourcemap: true
     },
     {
-      file: 'dist/bundles/bundle.umd.min.js',
+      file: 'dist/bundles/xeta.umd.min.js',
       format: 'umd',
       name: 'Xeta',
       plugins: [terser()],
