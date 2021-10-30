@@ -18,7 +18,6 @@ export default  {
       format: 'esm',
       plugins: [terser()],
       sourcemap: true,
-      intro: 'const global = window;'
     },
     {
       file: 'dist/bundles/xeta.umd.js',

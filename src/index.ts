@@ -27,7 +27,7 @@ import { Wallet } from './library/wallet'
 import { Config } from './library/config'
 import { connect } from './library/methods'
 
-export const Xeta = {
+const Xeta = {
     /**
      * Modules
      */
@@ -66,3 +66,5 @@ export const Xeta = {
     config: Config,
     connect: connect,
 }
+
+export default Xeta

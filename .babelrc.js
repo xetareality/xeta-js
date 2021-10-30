@@ -13,6 +13,7 @@ module.exports = {
         targets: '> 0.25%, not dead',
       }], ...sharedPresets],
       plugins: [
+        ['add-module-exports'],
         ['@babel/plugin-transform-runtime', {
           regenerator: true
         }]
@@ -24,6 +25,7 @@ module.exports = {
         modules: 'commonjs',
       }], ...sharedPresets],
       plugins: [
+        ['add-module-exports'],
         ['@babel/plugin-transform-runtime', {
           regenerator: true
         }]
