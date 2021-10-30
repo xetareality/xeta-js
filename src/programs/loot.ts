@@ -37,13 +37,11 @@ export class Loot {
     /**
      * Deposit to loot pool
      */
-    deposit({token, amount=1}, tx={}) {
-        if (amount != 1) throw Error('validation: function only supports non-fungible tokens')
-
+    deposit({token}, tx={}) {
         return Transaction.create({...tx, ...{
             to: this.pool.address,
             token: token,
-            amount: amount,
+            amount: 1,
             function: 'loot.deposit',
         }})
     }

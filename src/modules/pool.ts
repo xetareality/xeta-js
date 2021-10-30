@@ -19,6 +19,8 @@ export const Pool = {
      * Create pool
      */
     create: async ({token, program, name=null, mechanism=null, candidates=null, rate=null, percentage=null, probability=null, expires=null, answers=null, minAmount=null, maxAmount=null, minTime=null, maxTime=null, transfersLimit=null, claimsLimit=null, tokenLimit=null, xetaLimit=null, tokenTarget=null, xetaTarget=null}, tx={}) => {
+        if (!['auction', 'launch', 'lock', 'loot', 'lottery', 'royalty', 'staking', 'vote'].includes(program)) throw Error('validation: invalid program')
+
         var result = await Transaction.create({...tx, ...{
             token: token,
             function: 'pool.create',

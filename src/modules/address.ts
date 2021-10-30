@@ -21,8 +21,8 @@ export const Address = {
     /**
      * Update address values
      */
-    update: async ({name=null, object=null, description=null, links=null, meta=null}) => {
-        return Models.parseValues(await Transaction.create({
+    update: async ({name=null, object=null, description=null, links=null, meta=null}, tx={}) => {
+        var result = await Transaction.create({...tx, ...{
             function: 'address.update',
             message: JSON.stringify(Utils.strip({
                 name: name,
@@ -31,6 +31,9 @@ export const Address = {
                 links: links,
                 meta: meta,
             })),
-        }), Models.TRANSACTION)
+        }})
+
+        result.data = Models.parseValues(result.data, Models.TOKEN)
+        return result
     },
 }

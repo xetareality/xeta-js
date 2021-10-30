@@ -69,8 +69,8 @@ export const Transaction = {
     /**
      * Batch create NFTs
      */
-    batchNft: async ({transactions}) => {
-        var tx = Transaction.template()
+    batchNft: async ({transactions}, tx={}) => {
+        tx = {...Transaction.template(), ...tx}
 
         await Promise.all(transactions.map(async (t) => {
             Models.requiredFields(t, ['to', 'token'])

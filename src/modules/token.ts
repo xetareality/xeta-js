@@ -57,7 +57,7 @@ export const Token = {
      * Batch create NFTs
      * Fungible tokens cannot be created in batch due to swap pool creation
      */
-    batch: async ({tokens}) => {
+    batch: async ({tokens}, tx={}) => {
         if (tokens.length > 8) throw Error('input: batch exceeds maximum items')
         if (tokens.some(t => ![undefined, 1].includes(t.supply))) throw Error('validation: function only supports non-fungible tokens')
 
@@ -67,10 +67,10 @@ export const Token = {
             Models.validFormats(t, Models.TOKEN)
         })
 
-        return Transaction.create({
+        return Transaction.create({...tx, ...{
             function: 'token.batch',
             message: JSON.stringify(tokens),
-        })
+        }})
     },
     /**
      * Get token by address

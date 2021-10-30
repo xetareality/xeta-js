@@ -2,6 +2,7 @@ import { Transaction } from '../modules/transaction'
 import { Pool } from '../modules/pool'
 import { Config } from '../library/config'
 import { Models } from '../library/models'
+import { Utils } from '../library/utils'
 
 export class Vote {
     public pool
@@ -25,7 +26,7 @@ export class Vote {
     /**
      * Transfer to vote pool
      */
-    transfer({amount, answer=null, number=null}, tx={}) {
+    transfer({amount=0, answer=null, number=null}, tx={}) {
         if ((this.pool.candidates && !answer) || (this.pool.candidates && number)) throw Error('validation: incorrect answer')
 
         return Transaction.create({...tx, ...{
@@ -33,7 +34,7 @@ export class Vote {
             token: this.pool.token,
             amount: amount,
             function: 'vote.transfer',
-            message: JSON.stringify({answer: answer, number: number}),
+            message: JSON.stringify(Utils.strip({answer: answer, number: number})),
         }})
     }
 

@@ -6,7 +6,7 @@ import { Transaction } from './transaction'
 
 export const Audit = {
     /**
-     * Request an token balance audit
+     * Request a token balance audit
      */
     balance: async ({address, token, limit=1}) => {
         return $fetch(Config.interface+'/audit', {
