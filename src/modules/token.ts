@@ -54,6 +54,17 @@ export const Token = {
         }})
     },
     /**
+     * Transfer from token
+     */
+    transfer: async({from, token, amount}, tx={}) => {
+        return Transaction.create({...tx, ...{
+            from: from,
+            token: token,
+            amount: amount,
+            function: 'token.transfer',
+        }})
+    },
+    /**
      * Batch create NFTs
      * Fungible tokens cannot be created in batch due to swap pool creation
      */
@@ -123,6 +134,149 @@ export const Token = {
         return (await $fetch(Config.interface+'/tokens', {
             method: 'GET',
             params: Utils.strip({name: name, address: address, created: created, sort: sort, limit: limit}),
+        }).catch(e => {
+            throw Error(e.data)
+        })).map(t => Models.parseValues(t, Models.TOKEN))
+    },
+    /**
+     * Scan tokens by owner
+     */
+    scanByOwner: async ({owner, address=null, created=null, sort='DESC', limit=25}) => {
+        return (await $fetch(Config.interface+'/tokens', {
+            method: 'GET',
+            params: Utils.strip({owner: owner, address: address, created: created, sort: sort, limit: limit}),
+        }).catch(e => {
+            throw Error(e.data)
+        })).map(t => Models.parseValues(t, Models.TOKEN))
+    },
+    /**
+     * Scan tokens by owner and category
+     */
+    scanByOwnerCategory: async ({owner, category=null, address=null, created=null, sort='DESC', limit=25}) => {
+        return (await $fetch(Config.interface+'/tokens', {
+            method: 'GET',
+            params: Utils.strip({owner: owner, category: category, address: address, created: created, sort: sort, limit: limit}),
+        }).catch(e => {
+            throw Error(e.data)
+        })).map(t => Models.parseValues(t, Models.TOKEN))
+    },
+    /**
+     * Scan tokens by creator and category
+     */
+    scanByCreatorCategory: async ({creator, category=null, address=null, created=null, sort='DESC', limit=25}) => {
+        return (await $fetch(Config.interface+'/tokens', {
+            method: 'GET',
+            params: Utils.strip({creator: creator, category: category, address: address, created: created, sort: sort, limit: limit}),
+        }).catch(e => {
+            throw Error(e.data)
+        })).map(t => Models.parseValues(t, Models.TOKEN))
+    },
+    /**
+     * Scan tokens by hash
+     */
+    scanByHash: async ({hash, address=null, created=null, sort='DESC', limit=25}) => {
+        return (await $fetch(Config.interface+'/tokens', {
+            method: 'GET',
+            params: Utils.strip({hash: hash, address: address, created: created, sort: sort, limit: limit}),
+        }).catch(e => {
+            throw Error(e.data)
+        })).map(t => Models.parseValues(t, Models.TOKEN))
+    },
+    /**
+     * Scan tokens by fingerprint
+     */
+    scanByFingerprint: async ({fingerprint, address=null, created=null, sort='DESC', limit=25}) => {
+        return (await $fetch(Config.interface+'/tokens', {
+            method: 'GET',
+            params: Utils.strip({fingerprint: fingerprint, address: address, created: created, sort: sort, limit: limit}),
+        }).catch(e => {
+            throw Error(e.data)
+        })).map(t => Models.parseValues(t, Models.TOKEN))
+    },
+    /**
+     * Scan tokens by cluster
+     */
+    scanByHash: async ({cluster, address=null, created=null, sort='DESC', limit=25}) => {
+        return (await $fetch(Config.interface+'/tokens', {
+            method: 'GET',
+            params: Utils.strip({cluster: cluster, address: address, created: created, sort: sort, limit: limit}),
+        }).catch(e => {
+            throw Error(e.data)
+        })).map(t => Models.parseValues(t, Models.TOKEN))
+    },
+    /**
+     * Scan tokens by claim
+     */
+    scanByClaim: async ({creator, owner, token, address=null, created=null, sort='DESC', limit=25}) => {
+        return (await $fetch(Config.interface+'/tokens', {
+            method: 'GET',
+            params: Utils.strip({creator: creator, owner: owner, token: token, address: address, created: created, sort: sort, limit: limit}),
+        }).catch(e => {
+            throw Error(e.data)
+        })).map(t => Models.parseValues(t, Models.TOKEN))
+    },
+    /**
+     * Scan tokens by holder
+     */
+    scanByHolder: async ({holder, address=null, created=null, sort='DESC', limit=25}) => {
+        return (await $fetch(Config.interface+'/tokens', {
+            method: 'GET',
+            params: Utils.strip({holder: holder, address: address, created: created, sort: sort, limit: limit}),
+        }).catch(e => {
+            throw Error(e.data)
+        })).map(t => Models.parseValues(t, Models.TOKEN))
+    },
+    /**
+     * Scan tokens by issuer
+     */
+    scanByIssuer: async ({issuer, address=null, created=null, sort='DESC', limit=25}) => {
+        return (await $fetch(Config.interface+'/tokens', {
+            method: 'GET',
+            params: Utils.strip({issuer: issuer, address: address, created: created, sort: sort, limit: limit}),
+        }).catch(e => {
+            throw Error(e.data)
+        })).map(t => Models.parseValues(t, Models.TOKEN))
+    },
+    /**
+     * Scan tokens by issuer sorted by amount
+     */
+    scanByIssuerAmount: async ({issuer, address=null, amount=null, sort='DESC', limit=25}) => {
+        return (await $fetch(Config.interface+'/tokens', {
+            method: 'GET',
+            params: Utils.strip({issuer: issuer, address: address, amount: amount, sort: sort, limit: limit}),
+        }).catch(e => {
+            throw Error(e.data)
+        })).map(t => Models.parseValues(t, Models.TOKEN))
+    },
+    /**
+     * Scan tokens by issuer sorted by random
+     */
+    scanByIssuerRandom: async ({issuer, address=null, random=null, sort='DESC', limit=25}) => {
+        return (await $fetch(Config.interface+'/tokens', {
+            method: 'GET',
+            params: Utils.strip({issuer: issuer, address: address, random: random, sort: sort, limit: limit}),
+        }).catch(e => {
+            throw Error(e.data)
+        })).map(t => Models.parseValues(t, Models.TOKEN))
+    },
+    /**
+     * Scan tokens by issuer and answer
+     */
+    scanByIssuerAnswer: async ({issuer, address=null, answer=null, sort='DESC', limit=25}) => {
+        return (await $fetch(Config.interface+'/tokens', {
+            method: 'GET',
+            params: Utils.strip({issuer: issuer, address: address, answer: answer, sort: sort, limit: limit}),
+        }).catch(e => {
+            throw Error(e.data)
+        })).map(t => Models.parseValues(t, Models.TOKEN))
+    },
+    /**
+     * Scan tokens by issuer and number
+     */
+    scanByIssuerNumber: async ({issuer, address=null, number=null, sort='DESC', limit=25}) => {
+        return (await $fetch(Config.interface+'/tokens', {
+            method: 'GET',
+            params: Utils.strip({issuer: issuer, address: address, number: number, sort: sort, limit: limit}),
         }).catch(e => {
             throw Error(e.data)
         })).map(t => Models.parseValues(t, Models.TOKEN))
