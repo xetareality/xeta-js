@@ -36,9 +36,10 @@ export class Lottery {
     /**
      * Claim from lottery pool
      */
-    claim(tx={}) {
+    claim({claim}, tx={}) {
         return Transaction.create({...tx, ...{
             to: this.pool.address,
+            token: claim,
             function: 'lottery.claim',
         }})
     }
@@ -58,9 +59,10 @@ export class Lottery {
     /**
      * Withdraw from lottery pool
      */
-    withdraw(tx={}) {
+    withdraw({claim}, tx={}) {
         return Transaction.create({...tx, ...{
             to: this.pool.address,
+            token: claim,
             function: 'lottery.withdraw',
         }})
     }

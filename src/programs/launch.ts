@@ -57,9 +57,10 @@ export class Launch {
     /**
      * Claim from launch pool
      */
-    claim(tx={}) {
+    claim({claim}, tx={}) {
         return Transaction.create({...tx, ...{
             to: this.pool.address,
+            token: claim,
             function: 'launch.claim',
         }})
     }
@@ -79,9 +80,10 @@ export class Launch {
     /**
      * Withdraw from launch pool
      */
-    withdraw(tx={}) {
+    withdraw({claim}, tx={}) {
         return Transaction.create({...tx, ...{
             to: this.pool.address,
+            token: claim,
             function: 'launch.withdraw',
         }})
     }

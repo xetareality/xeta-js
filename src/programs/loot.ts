@@ -49,10 +49,10 @@ export class Loot {
     /**
      * Withdraw from loot pool
      */
-    withdraw({token}, tx={}) {
+    withdraw({claim}, tx={}) {
         return Transaction.create({...tx, ...{
             to: this.pool.address,
-            token: token,
+            token: claim,
             function: 'loot.withdraw',
         }})
     }

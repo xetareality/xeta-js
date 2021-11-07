@@ -39,9 +39,10 @@ export class Lock {
     /**
      * Claim from lock pool
      */
-    claim(tx={}) {
+    claim({claim}, tx={}) {
         return Transaction.create({...tx, ...{
             to: this.pool.address,
+            token: claim,
             function: 'lock.claim',
         }})
     }
