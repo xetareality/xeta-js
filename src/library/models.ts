@@ -37,9 +37,8 @@ export const Models = {
         if (!object) return
         
         return Object.fromEntries(Object.entries(object)
-            .filter(e => Object.keys(model).includes(e[0]) || e[0] == 'data')
             .map(e => {
-                if (e[0] == 'data') return e
+                if (!Object.keys(model).includes(e[0])) return e
 
                 var t: string = model[e[0]][0]
                 var v: any = e[1]
@@ -64,7 +63,7 @@ export const Models = {
         var extended = ['pool.create', 'token.create', 'token.update', 'transaction.batch', 'token.batch', 'allowance.batch'].includes(object.function)
         
         Object.entries(object).forEach(e => {
-            if (!Object.keys(model).includes(e[0])) throw Error('input contains invalid attribute')
+            if (!Object.keys(model).includes(e[0])) throw Error('input contains invalid attribute '+e[0])
 
             var t: string = model[e[0]][0]
             var v: any = e[1]
@@ -102,7 +101,7 @@ export const Models = {
         function: ['string'],
         delegate: ['boolean'],
         error: ['string'],
-        input: ['string'],
+        origin: ['string'],
         outputs: ['strings'],
         confirmed: ['timestamp'],
         confirmations: ['integer'],
@@ -122,38 +121,45 @@ export const Models = {
         spender: ['hash'],
         amount: ['number'],
         created: ['timestamp'],
-    },
-    CLAIM: {
-        hash: ['hash'],
-        address: ['hash'],
-        token: ['hash'],
-        owner: ['hash'],
-        amount: ['number'],
-        created: ['timestamp'],
-        expires: ['timestamp'],
-        unlocks: ['timestamp'],
-        answer: ['hash'],
-        number: ['number'],
-        random: ['number'],
-        frozen: ['boolean'],
+        origin: ['string'],
     },
     TOKEN: {
         address: ['hash'],
         creator: ['hash'],
         name: ['string'],
-        ticker: ['string'],
-        supply: ['integer'],
         created: ['timestamp'],
-        reserve: ['integer'],
+        origin: ['string'],
         description: ['string'],
         links: ['strings'],
-        object: ['string'],
         meta: ['text'],
         icon: ['string'],
+        ticker: ['string'],
+        supply: ['integer'],
+        reserve: ['integer'],
+        owner: ['hash'],
+        object: ['string'],
+        frozen: ['boolean'],
+        processed: ['timestamp'],
+        category: ['string'],
+        ownerCategory: ['string'],
+        creatorCategory: ['string'],
         mime: ['string'],
         hash: ['string'],
         fingerprint: ['string'],
         cluster: ['string'],
+        claim: ['hash'],
+        holder: ['hash'],
+        issuer: ['hash'],
+        token: ['hash'],
+        tokenAmount: ['number'],
+        xetaAmount: ['number'],
+        expires: ['timestamp'],
+        unlocks: ['timestamp'],
+        random: ['number'],
+        answer: ['hash'],
+        number: ['number'],
+        resolved: ['timestamp'],
+        resolution: ['string'],
     },
     POOL: {
         address: ['hash'],
@@ -161,12 +167,15 @@ export const Models = {
         token: ['hash'],
         program: ['string'],
         created: ['timestamp'],
+        origin: ['string'],
         name: ['string'],
         mechanism: ['string'],
         candidates: ['hashes'],
         rate: ['number'],
         percentage: ['number'],
         probability: ['number'],
+        answers: ['hashes'],
+        meta: ['text'],
         expires: ['timestamp'],
         minAmount: ['number'],
         maxAmount: ['number'],
@@ -184,10 +193,8 @@ export const Models = {
         tokenTurnover: ['number'],
         transfersCount: ['integer'],
         claimsCount: ['integer'],
-        answers: ['hashes'],
         closed: ['boolean'],
         leader: ['hash'],
-        meta: ['text'],
     },
     CREDENTIALS: {
         hash: ['hash'],

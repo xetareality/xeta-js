@@ -3,6 +3,8 @@ import Big from 'big.js'
 export const Config = {
     publicKey: null,
     privateKey: null,
+    seed: null,
+    password: null,
     interface: 'https://interface.xetareality.com',
     network: 'https://mainnet.xetareality.com',
     zeroAddress: '11111111111111111111111111111zero',

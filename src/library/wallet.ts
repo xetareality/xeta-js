@@ -1,3 +1,4 @@
+import { Config } from './config'
 import { Utils } from './utils'
 import * as ed from 'noble-ed25519'
 
@@ -24,5 +25,17 @@ export const Wallet = {
             Utils.base58decode(signature),
             Utils.base58decode(message),
             Utils.base58decode(publicKey))
+    },
+    /**
+     * Set public and private key
+     * Optionally set network and interface endpoints
+     */
+    connect: ({publicKey, privateKey=null, networkEndpoint=null, interfaceEndpoint=null, seed=null, password=null}) => {
+        Config.publicKey = publicKey
+        Config.privateKey = privateKey
+        if (networkEndpoint) Config.network = networkEndpoint
+        if (interfaceEndpoint) Config.interface = interfaceEndpoint
+        if (seed) Config.seed = seed
+        if (password) Config.password = password
     }
 }
