@@ -13,11 +13,12 @@ Install Xeta through npm, import it, generate a public/private key (or use your 
 npm install xeta-js
 
 # Imports
-import Xeta from 'xeta-js'
+import Xeta from 'xeta-js' // ESM
+const Xeta = require('xeta-js') // CJS
 
 # Generate and connect a keypair
 public, private = Xeta.wallet.generateKeypair()
-Xeta.connect({publicKey: public, privateKey: private})
+Xeta.wallet.connect({publicKey: public, privateKey: private})
 ```
 
 # Interface
@@ -37,7 +38,7 @@ Xeta.transaction.batchGet({signatures: [SIGNATURE, SIGNATURE]})
 Xeta.transaction.poll({signature: SIGNATURE, interval: 0.5, timeout: 5})
 
 # Scan transactions by from-address
-Xeta.transaction.scanByFrom({from_address: ADDRESS, sort: 'DESC', limit: 25})
+Xeta.transaction.scanByFrom({from: ADDRESS, sort: 'DESC', limit: 25})
 
 # Scan transactions by to-address
 Xeta.transaction.scanByTo({to: ADDRESS, sort: 'DESC', limit: 25})
@@ -52,7 +53,7 @@ Xeta.transaction.scanByToken({token: ADDRESS, sort: 'DESC', limit: 25})
 Xeta.transaction.scanByPeriod({period: YYMMDDHH, sort: 'DESC', limit: 25})
 
 # Scan transactions by from and token
-Xeta.transaction.scanByFromToken({from_address: ADDRESS, token: ADDRESS, sort: 'DESC', limit: 25})
+Xeta.transaction.scanByFromToken({from: ADDRESS, token: ADDRESS, sort: 'DESC', limit: 25})
 
 # Scan transactions by to and token
 Xeta.transaction.scanByToToken({to: ADDRESS, token: ADDRESS, sort: 'DESC', limit: 25})
@@ -65,7 +66,7 @@ Xeta.transaction.scanByToToken({to: ADDRESS, token: ADDRESS, sort: 'DESC', limit
 Xeta.token.get({address: ADDRESS})
 
 # Batch get tokens by addresses
-Xeta.token.batchGet({signatures: [SIGNATURE, SIGNATURE]})
+Xeta.token.batchGet({addresses: [ADDRESS, ADDRESS]})
 
 # Scan tokens by creator
 Xeta.token.scanByCreator({creator: ADDRESS, sort: 'DESC', limit: 25})
@@ -82,6 +83,12 @@ Xeta.token.scanByName({name'Xeta', sort: 'DESC', limit: 25})
 ```
 # Get a pool by address
 Xeta.pool.get({address: ADDRESS})
+
+# Batch get pools by addresses
+Xeta.pool.batchGet({addresses: [ADDRESS, ADDRESS]})
+
+# Get a pool by address (return instance)
+Xeta.pool.instance({address: ADDRESS})
 
 # Scan pools by creator
 Xeta.pool.scanByCreator({creator: ADDRESS, sort: 'DESC', limit: 25})
@@ -169,6 +176,22 @@ Xeta.statistic.get({key: STRING, time: TIMESTAMP(s)})
 Xeta.statistic.scan({key: STRING})
 ```
 
+## Credentials
+
+```
+# Read credentials
+Xeta.credentials.init({seed: STRING, password: STRING})
+
+# Read credentials and return private key
+Xeta.credentials.init({seed: STRING, password: STRING, unsafe: true})
+
+# Create credentials
+Xeta.credentials.init({seed: STRING, password: STRING, create: true})
+
+# Sign transaction with managed credentials
+Xeta.credentials.sign({seed: STRING, password: STRING}, TRANSACTION)
+```
+
 # Modules
 
 Modules are wrapper methods that submit transactions to the network endpoint. Fees for methods are fixed and most recent fees can be found on [docs.xetareality.com](https://docs.xetareality.com). 
@@ -191,7 +214,7 @@ Xeta.transaction.sponsor({amount: 10, to: ADDRESS})
 # Batch distribute fungible tokens (up to 10 transfers per request})
 Xeta.transaction.batchFt({token: ADDRESS, transactions: [{to: ADDRESS, amount: 5}, {to: ADDRESS, amount: 5}]})
 
-# Batch distribute non-fungible tokens (up to 8 transfers per requests)
+# Batch distribute non-fungible tokens (up to 10 transfers per requests)
 Xeta.transaction.batchNft({transactions: [{to: ADDRESS, token: ADDRESS}, {to: ADDRESS, token: ADDRESS}]})
 ```
 
@@ -204,11 +227,14 @@ Xeta.token.create({name: 'Xeta Punk, supply: 1, object: URL, icon: URL, meta: AT
 # Create a fungible token
 Xeta.token.create({name: 'Bitcoin', ticker: 'BTC', supply: 21000000, icon: URL})
 
-# Batch create non-fungible tokens (up to 40 tokens per request)
+# Batch create non-fungible tokens (up to 20 tokens per request)
 Xeta.token.batch({tokens: [{name: 'Xeta Punk #1', object: URL, icon: URL}, {name: 'Xeta Punk #2', object: URL, icon: URL}]})
 
 # Mint reserve-supply for a fungible token
 Xeta.token.mint({token: ADDRESS, amount: 10})
+
+# Transfer from token
+Xeta.token.transfer({from: ADDRESS, to: ADDRESS, token: ADDRESS, amount: 10})
 
 # Update details for a token (description, links, meta, icon)
 Xeta.token.update({token: ADDRESS, description: TEXT, links: [LINK, LINK], meta: TEXT, icon: URL})
@@ -274,7 +300,7 @@ launch = Xeta.launch.create({token: ADDRESS, expires: TIMESTAMP, xetaTarget: 10,
 launch.deposit({amount: 10})
 
 # Withdraw the pool-token
-launch.withdraw()
+launch.withdraw({claim: ADDRESS})
 
 # Close a launch pool
 launch.close()
@@ -292,7 +318,33 @@ launch.transfer({amount: 5})
 launch.swap({amount: 5})
 
 # Claim after expiry
-launch.claim()
+launch.claim({claim: ADDRESS})
+```
+
+## Lending
+
+Creator methods:
+```
+# Create a lending pool
+lending = Xeta.lending.create({token: ADDRESS})
+```
+
+Participant methods:
+```
+# Deposit the pool-token to be borrowed
+lending.deposit({amount: 10})
+
+# Withdraw previously deposited tokens
+lending.withdraw({claim: ADDRESS})
+
+# Liquidate claim from lending pool
+lending.liquidate({claim: ADDRESS})
+
+# Borrow the pool token at a certain collateralization rate
+lending.transfer({collateralization: 2.5})
+
+# Return borrowed tokens and reclaim collateral
+lending.settle({claim: ADDRESS})
 ```
 
 ## Lock
@@ -312,7 +364,7 @@ lock.transfer({amount: 10, unlocks: TIMESTAMP})
 lock.transfer({amount: 10, unlocks: TIMESTAMP, address: ADDRESS})
 
 # Claim locked tokens after unlock time expires
-lock.claim()
+lock.claim({claim: ADDRESS})
 ```
 
 ## Loot
@@ -326,7 +378,7 @@ loot = Xeta.loot.create({token: ADDRESS, probability: 0.5, minAmount: 5, maxAmou
 loot.deposit({token: ADDRESS})
 
 # Withdraw a deposited NFT
-loot.withdraw({token: ADDRESS})
+loot.withdraw({claim: ADDRESS})
 
 # Clear a loot pools earnings
 loot.clear()
@@ -349,7 +401,7 @@ lottery = Xeta.lottery.create({token: ADDRESS, expires: TIMESTAMP, claimsLimit: 
 lottery.deposit({amount: 1000})
 
 # Withdraw the deposited pool tokens
-lottery.withdraw()
+lottery.withdraw({claim: ADDRESS})
 
 # Close a lottery pool
 lottery.close()
@@ -364,7 +416,7 @@ Participant methods:
 lottery.transfer({amount: 0})
 
 # Claim after pool expiry/closure
-lottery.claim()
+lottery.claim({claim: ADDRESS})
 ```
 
 ## Royalty
@@ -378,7 +430,7 @@ royalty = Xeta.royalty.create({token: ADDRESS, rate: 0.3})
 royalty.deposit({amount: 1000})
 
 # Withdraw deposited royalty rewards
-royalty.withdraw()
+royalty.withdraw({claim: ADDRESS})
 
 # Close a royalty pool
 royalty.close()
@@ -404,7 +456,7 @@ staking = Xeta.staking.create({token: ADDRESS, rate: 0.3, percentage: 0.5, minTi
 staking.deposit({amount: 1000})
 
 # Withdraw deposited rewards
-staking.withdraw()
+staking.withdraw({claim: ADDRESS})
 ```
 
 Participate methods:
@@ -413,7 +465,7 @@ Participate methods:
 staking.transfer({amount: 10, unlocks: int(time.time()+30*86400000)})
 
 # Claim amount and staking rewards
-staking.claim()
+staking.claim({claim: ADDRESS})
 ```
 
 ## Swap
@@ -429,7 +481,7 @@ swap.deposit({token: ADDRESS, amount: 10})
 swap.supply()
 
 # Withdraw 50% of supplied liqudity
-swap.withdraw({percentage: 0.5})
+swap.withdraw({claim: ADDRESS, percentage: 0.5})
 ```
 
 Participant methods:
@@ -455,7 +507,7 @@ vote.transfer({amount: 5, answer: HASH, number: NUMBER})
 vote.resolve()
 
 # Claim proceeds (if mechanism is top:N)
-vote.claim()
+vote.claim({claim: ADDRESS})
 ```
 
 # Feedback & Contributions

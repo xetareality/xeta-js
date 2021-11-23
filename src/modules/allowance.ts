@@ -42,10 +42,10 @@ export const Allowance = {
     /**
      * Get allowance by address, token and spender
      */
-    get: async ({address, token, spender}) => {
+    get: async ({address, token, spender, extended=null}) => {
         return Models.parseValues(await $fetch(Config.interface+'/allowance', {
             method: 'GET',
-            params: {address: address, token: token, spender: spender},
+            params: Utils.strip({address: address, token: token, spender: spender, extended: extended}),
         }).catch(e => {
             throw Error(e.data)
         }), Models.ALLOWANCE)
@@ -53,10 +53,10 @@ export const Allowance = {
     /**
      * Get allowance by hash
      */
-    getByHash: async ({hash}) => {
+    getByHash: async ({hash, extended=null}) => {
         return Models.parseValues(await $fetch(Config.interface+'/allowance', {
             method: 'GET',
-            params: {hash: hash},
+            params: Utils.strip({hash: hash, extended: extended}),
         }).catch(e => {
             throw Error(e.data)
         }), Models.ALLOWANCE)
@@ -64,10 +64,10 @@ export const Allowance = {
     /**
      * Scan allowances by address
      */
-    scanByAddress: async ({address, hash=null, created=null, sort='DESC', limit=25}) => {
+    scanByAddress: async ({address, hash=null, created=null, sort='DESC', limit=25, extended=null}) => {
         return (await $fetch(Config.interface+'/allowances', {
             method: 'GET',
-            params: Utils.strip({address: address, hash: hash, created: created, sort: sort, limit: limit}),
+            params: Utils.strip({address: address, hash: hash, created: created, sort: sort, limit: limit, extended: extended}),
         }).catch(e => {
             throw Error(e.data)
         })).map(d => Models.parseValues(d, Models.ALLOWANCE))
@@ -75,10 +75,10 @@ export const Allowance = {
     /**
      * Scan allowances by spender
      */
-    scanBySpender: async ({spender, hash=null, created=null, sort='DESC', limit=25}) => {
+    scanBySpender: async ({spender, hash=null, created=null, sort='DESC', limit=25, extended=null}) => {
         return (await $fetch(Config.interface+'/allowances', {
             method: 'GET',
-            params: Utils.strip({spender: spender, hash: hash, created: created, sort: sort, limit: limit}),
+            params: Utils.strip({spender: spender, hash: hash, created: created, sort: sort, limit: limit, extended: extended}),
         }).catch(e => {
             throw Error(e.data)
         })).map(d => Models.parseValues(d, Models.ALLOWANCE))

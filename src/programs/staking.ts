@@ -41,9 +41,10 @@ export class Staking {
     /**
      * Claim from staking pool
      */
-    claim(tx={}) {
+    claim({claim}, tx={}) {
         return Transaction.create({...tx, ...{
             to: this.pool.address,
+            token: claim,
             function: 'staking.claim',
         }})
     }
@@ -64,9 +65,10 @@ export class Staking {
     /**
      * Withdraw from staking pool
      */
-    withdraw(tx={}) {
+    withdraw({claim}, tx={}) {
         return Transaction.create({...tx, ...{
             to: this.pool.address,
+            token: claim,
             function: 'staking.withdraw',
         }})
     }

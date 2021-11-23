@@ -52,11 +52,12 @@ export class Swap {
     /**
      * Withdraw from swap pool
      */
-    withdraw({percentage=1}) {
+    withdraw({claim, percentage=1}) {
         if (percentage > 1) throw Error('input: percentage must between zero and one')
 
         return Transaction.create({
             to: this.pool.address,
+            token: claim,
             function: 'swap.withdraw',
             message: JSON.stringify({percentage: percentage})
         })

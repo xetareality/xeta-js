@@ -16,7 +16,10 @@ export const Address = {
             throw Error(e.data)
         })
 
-        return {balance: Models.parseValues(result.balance, Models.BALANCE), account: Models.parseValues(result.account, Models.TOKEN)}
+        return {
+            pool: Models.parseValues(result.pool, Models.POOL),
+            balance: Models.parseValues(result.balance, Models.BALANCE),
+            account: Models.parseValues(result.account, Models.TOKEN)}
     },
     /**
      * Update address values

@@ -3,7 +3,6 @@ import { Allowance } from './modules/allowance'
 import { Audit } from './modules/audit'
 import { Balance } from './modules/balance'
 import { Candle } from './modules/candle'
-import { Claim } from './modules/claim'
 import { Credentials } from './modules/credentials'
 import { Pool } from './modules/pool'
 import { Statistic } from './modules/statistic'
@@ -20,12 +19,11 @@ import { Staking } from './programs/staking'
 import { Swap } from './programs/swap'
 import { Vote } from './programs/vote'
 
-import { Hashing } from './library/hashing'
+import { Hashed } from './library/hashed'
 import { Models } from './library/models'
 import { Utils } from './library/utils'
 import { Wallet } from './library/wallet'
 import { Config } from './library/config'
-import { connect } from './library/methods'
 
 const Xeta = {
     /**
@@ -59,12 +57,11 @@ const Xeta = {
     /**
      * Library
      */
-    hashing: Hashing,
+    hashed: Hashed,
     models: Models,
     utils: Utils,
     wallet: Wallet,
     config: Config,
-    connect: connect,
 }
 
 export default Xeta

@@ -8,7 +8,7 @@ export const Token = {
     /**
      * Create token
      */
-    create: async ({name, supply=null, ticker=null, reserve=null, description=null, links=null, object=null, meta=null, icon=null, mime=null}, tx={}) => {
+    create: async ({name, ticker=null, supply=null, reserve=null, description=null, links=null, meta=null, icon=null, owner=null, category=null, object=null, mime=null, token=null, tokenAmount=null, xetaAmount=null, expires=null, unlocks=null, answer=null, number=null}, tx={}) => {
         if (parseInt(supply) == 0) throw Error('validation: supply cannot be 0')
         if (supply && parseInt(supply) != 1 && !ticker) throw Error('validation: fungible tokens require a ticker')
 
@@ -16,22 +16,31 @@ export const Token = {
             function: 'token.create',
             message: JSON.stringify(Utils.strip({
                 name: name,
-                supply: supply,
                 ticker: ticker,
+                supply: supply,
                 reserve: reserve,
                 description: description,
                 links: links,
-                object: object,
                 meta: meta,
                 icon: icon,
+                owner: owner,
+                category: category,
+                object: object,
                 mime: mime,
+                token: token,
+                tokenAmount: tokenAmount,
+                xetaAmount: xetaAmount,
+                expires: expires,
+                unlocks: unlocks,
+                answer: answer,
+                number: number,
             })),
         }})
     },
     /**
      * Update specified values of an token
      */
-    update: async ({token, description=null, links=null, meta=null, icon=null}, tx={}) => {
+    update: async ({token, description=null, links=null, meta=null, icon=null, category=null, frozen=null}, tx={}) => {
         return Transaction.create({...tx, ...{
             token: token,
             function: 'token.update',
@@ -40,6 +49,8 @@ export const Token = {
                 links: links,
                 meta: meta,
                 icon: icon,
+                category: category,
+                frozen: frozen,
             })),
         }})
     },
@@ -56,9 +67,10 @@ export const Token = {
     /**
      * Transfer from token
      */
-    transfer: async({from, token, amount}, tx={}) => {
+    transfer: async({from, to, token, amount}, tx={}) => {
         return Transaction.create({...tx, ...{
             from: from,
+            to: to,
             token: token,
             amount: amount,
             function: 'token.transfer',
@@ -69,12 +81,11 @@ export const Token = {
      * Fungible tokens cannot be created in batch due to swap pool creation
      */
     batch: async ({tokens}, tx={}) => {
-        if (tokens.length > 8) throw Error('input: batch exceeds maximum items')
-        if (tokens.some(t => ![undefined, 1].includes(t.supply))) throw Error('validation: function only supports non-fungible tokens')
+        if (tokens.length > 20) throw Error('input: batch exceeds maximum items')
 
         tokens.forEach(t => {
             Models.requiredFields(t, ['name'])
-            Models.exclusiveFields(t, ['name', 'supply', 'ticker', 'description', 'links', 'object', 'meta', 'icon', 'mime'])
+            Models.exclusiveFields(t, ['name', 'description', 'links', 'meta', 'icon', 'owner', 'category', 'object', 'mime', 'token', 'tokenAmount', 'xetaAmount', 'expires', 'unlocks', 'answer', 'number'])
             Models.validFormats(t, Models.TOKEN)
         })
 

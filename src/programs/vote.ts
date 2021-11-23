@@ -41,9 +41,10 @@ export class Vote {
     /**
      * Claim from vote pool
      */
-    claim(tx={}) {
+    claim({claim}, tx={}) {
         return Transaction.create({...tx, ...{
             to: this.pool.address,
+            token: claim,
             function: 'vote.claim',
         }})
     }

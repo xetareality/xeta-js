@@ -6,6 +6,7 @@ import { Transaction } from './transaction'
 
 import { Auction } from '../programs/auction'
 import { Launch } from '../programs/launch'
+import { Lending } from '../programs/lending'
 import { Lock } from '../programs/lock'
 import { Loot } from '../programs/loot'
 import { Lottery } from '../programs/lottery'
@@ -18,8 +19,8 @@ export const Pool = {
     /**
      * Create pool
      */
-    create: async ({token, program, name=null, mechanism=null, candidates=null, rate=null, percentage=null, probability=null, expires=null, answers=null, minAmount=null, maxAmount=null, minTime=null, maxTime=null, transfersLimit=null, claimsLimit=null, tokenLimit=null, xetaLimit=null, tokenTarget=null, xetaTarget=null}, tx={}) => {
-        if (!['auction', 'launch', 'lock', 'loot', 'lottery', 'royalty', 'staking', 'vote'].includes(program)) throw Error('validation: invalid program')
+    create: async ({token, program, name=null, mechanism=null, candidates=null, rate=null, percentage=null, probability=null, expires=null, answers=null, meta=null, minAmount=null, maxAmount=null, minTime=null, maxTime=null, transfersLimit=null, claimsLimit=null, tokenLimit=null, xetaLimit=null, tokenTarget=null, xetaTarget=null}, tx={}) => {
+        if (!['auction', 'launch', 'lending', 'lock', 'loot', 'lottery', 'royalty', 'staking', 'vote'].includes(program)) throw Error('validation: invalid program')
 
         var result = await Transaction.create({...tx, ...{
             token: token,
@@ -34,6 +35,7 @@ export const Pool = {
                 probability: probability,
                 expires: expires,
                 answers: answers,
+                meta: meta,
                 minAmount: minAmount,
                 maxAmount: maxAmount,
                 minTime: minTime,
@@ -62,17 +64,40 @@ export const Pool = {
     },
     /**
      * Get pool by address
+     */
+    get: async ({address, extended=null}) => {
+        return Models.parseValues(await $fetch(Config.interface+'/pool', {
+            method: 'GET',
+            params: Utils.strip({address: address, extended: extended}),
+        }).catch(e => {
+            throw Error(e.data)
+        }), Models.POOL)
+    },
+    /**
+     * Batch get pools by addresses
+     */
+    batchGet: async ({addresses, extended=null}) => {
+        return (await $fetch(Config.interface+'/pools', {
+            method: 'GET',
+            params: Utils.strip({addresses: addresses.join(','), extended: extended}),
+        }).catch(e => {
+            throw Error(e.data)
+        })).map(t => Models.parseValues(t, Models.POOL))
+    },
+    /**
+     * Get pool by address
      * Return as program instance
      */
-    get: async ({address}) => {
+    instance: async ({address, extended=null}) => {
         var result = await $fetch(Config.interface+'/pool', {
             method: 'GET',
-            params: {address: address},
+            params: Utils.strip({address: address, extended: extended}),
         }).catch(e => {
             throw Error(e.data)
         })
 
         if (!result) return
+
         return new {
             auction: Auction,
             launch: Launch,
@@ -88,10 +113,10 @@ export const Pool = {
     /**
      * Scan pools by token
      */
-    scanByToken: async ({token, address=null, program=null, sort='DESC', limit=25}) => {
+    scanByToken: async ({token, address=null, program=null, sort='DESC', limit=25, extended=null}) => {
         return (await $fetch(Config.interface+'/pools', {
             method: 'GET',
-            params: Utils.strip({token: token, address: address, program: program, sort: sort, limit: limit}),
+            params: Utils.strip({token: token, address: address, program: program, sort: sort, limit: limit, extended: extended}),
         }).catch(e => {
             throw Error(e.data)
         })).map(d => Models.parseValues(d, Models.POOL))
@@ -99,10 +124,10 @@ export const Pool = {
     /**
      * Scan pools by creator
      */
-    scanByCreator: async ({creator, address=null, program=null, sort='DESC', limit=25}) => {
+    scanByCreator: async ({creator, address=null, program=null, sort='DESC', limit=25, extended=null}) => {
         return (await $fetch(Config.interface+'/pools', {
             method: 'GET',
-            params: Utils.strip({creator: creator, address: address, program: program, sort: sort, limit: limit}),
+            params: Utils.strip({creator: creator, address: address, program: program, sort: sort, limit: limit, extended: extended}),
         }).catch(e => {
             throw Error(e.data)
         })).map(d => Models.parseValues(d, Models.POOL))
@@ -110,10 +135,10 @@ export const Pool = {
     /**
      * Scan pools by name
      */
-    scanByName: async ({name, address=null, program=null, sort='DESC', limit=25}) => {
+    scanByName: async ({name, address=null, program=null, sort='DESC', limit=25, extended=null}) => {
         return (await $fetch(Config.interface+'/pools', {
             method: 'GET',
-            params: Utils.strip({name: name, address: address, program: program, sort: sort, limit: limit}),
+            params: Utils.strip({name: name, address: address, program: program, sort: sort, limit: limit, extended: extended}),
         }).catch(e => {
             throw Error(e.data)
         })).map(d => Models.parseValues(d, Models.POOL))

@@ -57,9 +57,10 @@ export class Royalty {
     /**
      * Withdraw from royalty pool
      */
-    withdraw(tx={}) {
+    withdraw({claim}, tx={}) {
         return Transaction.create({...tx, ...{
             to: this.pool.address,
+            token: claim,
             function: 'royalty.withdraw',
         }})
     }

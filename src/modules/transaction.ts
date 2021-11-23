@@ -3,7 +3,7 @@ import { Config, Constants } from '../library/config'
 import { Utils } from '../library/utils'
 import { Models } from '../library/models'
 import { Wallet } from '../library/wallet'
-import { Hashing } from '../library/hashing'
+import { Hashed } from '../library/hashed'
 
 export const Transaction = {
     /**
@@ -30,7 +30,7 @@ export const Transaction = {
         if (tx.function && tx.function != tx.function.toLowerCase()) throw Error('invalid function')
 
         if (!tx.signature && !Config.privateKey) return tx
-        if (!tx.signature) tx.signature = await Wallet.sign(await Hashing.transaction(tx), Config.privateKey)
+        if (!tx.signature) tx.signature = await Wallet.sign(await Hashed.transaction(tx), Config.privateKey)
 
         var result = await $fetch(Config.network+'/transaction', {
             method: 'POST',
@@ -76,7 +76,7 @@ export const Transaction = {
             Models.requiredFields(t, ['to', 'token'])
             Models.exclusiveFields(t, ['to', 'token'])
             Models.validFormats(t, Models.TRANSACTION)
-            t.signature = await Wallet.sign(await Hashing.transaction({...{sender: tx.sender, from: tx.from, amount: 1, nonce: tx.nonce}, ...t}), Config.privateKey)
+            t.signature = await Wallet.sign(await Hashed.transaction({...{sender: tx.sender, from: tx.from, amount: 1, nonce: tx.nonce}, ...t}), Config.privateKey)
         }))
 
         var result = await Transaction.create({...tx, ...{
@@ -100,10 +100,10 @@ export const Transaction = {
     /**
      * Get transaction by signature
      */
-    get: async ({signature}) => {
+    get: async ({signature, extended=null}) => {
         return Models.parseValues(await $fetch(Config.interface+'/transaction', {
             method: 'GET',
-            params: {signature: signature},
+            params: Utils.strip({signature: signature, extended: extended}),
         }).catch(e => {
             throw Error(e.data)
         }), Models.TRANSACTION)
@@ -111,10 +111,10 @@ export const Transaction = {
     /**
      * Batch get transactions by signature
      */
-    batchGet: async ({signatures}) => {
+    batchGet: async ({signatures, extended=null}) => {
         return (await $fetch(Config.interface+'/transactions', {
             method: 'GET',
-            params: {signatures: signatures.join(',')},
+            params: Utils.strip({signatures: signatures.join(','), extended: extended}),
         }).catch(e => {
             throw Error(e.data)
         })).map(d => Models.parseValues(d, Models.TRANSACTION))
@@ -139,10 +139,10 @@ export const Transaction = {
     /**
      * Scan transactions by from
      */
-    scanByFrom: async ({from, signature=null, created=null, sort='DESC', limit=25}) => {
+    scanByFrom: async ({from, signature=null, created=null, sort='DESC', limit=25, extended=null}) => {
         return (await $fetch(Config.interface+'/transactions', {
             method: 'GET',
-            params: Utils.strip({from: from, signature: signature, created: created, sort: sort, limit: limit}),
+            params: Utils.strip({from: from, signature: signature, created: created, sort: sort, limit: limit, extended: extended}),
         }).catch(e => {
             throw Error(e.data)
         })).map(d => Models.parseValues(d, Models.TRANSACTION))
@@ -150,10 +150,10 @@ export const Transaction = {
     /**
      * Scan transactions by to
      */
-    scanByTo: async ({to, signature=null, created=null, sort='DESC', limit=25}) => {
+    scanByTo: async ({to, signature=null, created=null, sort='DESC', limit=25, extended=null}) => {
         return (await $fetch(Config.interface+'/transactions', {
             method: 'GET',
-            params: Utils.strip({to: to, signature: signature, created: created, sort: sort, limit: limit}),
+            params: Utils.strip({to: to, signature: signature, created: created, sort: sort, limit: limit, extended: extended}),
         }).catch(e => {
             throw Error(e.data)
         })).map(d => Models.parseValues(d, Models.TRANSACTION))
@@ -161,10 +161,10 @@ export const Transaction = {
     /**
      * Scan transactions by sender
      */
-    scanBySender: async ({sender, signature=null, created=null, sort='DESC', limit=25}) => {
+    scanBySender: async ({sender, signature=null, created=null, sort='DESC', limit=25, extended=null}) => {
         return (await $fetch(Config.interface+'/transactions', {
             method: 'GET',
-            params: Utils.strip({sender: sender, signature: signature, created: created, sort: sort, limit: limit}),
+            params: Utils.strip({sender: sender, signature: signature, created: created, sort: sort, limit: limit, extended: extended}),
         }).catch(e => {
             throw Error(e.data)
         })).map(d => Models.parseValues(d, Models.TRANSACTION))
@@ -172,10 +172,10 @@ export const Transaction = {
     /**
      * Scan transactions by token
      */
-    scanByToken: async ({token, signature=null, created=null, sort='DESC', limit=25}) => {
+    scanByToken: async ({token, signature=null, created=null, sort='DESC', limit=25, extended=null}) => {
         return (await $fetch(Config.interface+'/transactions', {
             method: 'GET',
-            params: Utils.strip({token: token, signature: signature, created: created, sort: sort, limit: limit}),
+            params: Utils.strip({token: token, signature: signature, created: created, sort: sort, limit: limit, extended: extended}),
         }).catch(e => {
             throw Error(e.data)
         })).map(d => Models.parseValues(d, Models.TRANSACTION))
@@ -183,10 +183,10 @@ export const Transaction = {
     /**
      * Scan transactions by period
      */
-    scanByPeriod: async ({period, signature=null, created=null, sort='DESC', limit=25}) => {
+    scanByPeriod: async ({period, signature=null, created=null, sort='DESC', limit=25, extended=null}) => {
         return (await $fetch(Config.interface+'/transactions', {
             method: 'GET',
-            params: Utils.strip({period: period, signature: signature, created: created, sort: sort, limit: limit}),
+            params: Utils.strip({period: period, signature: signature, created: created, sort: sort, limit: limit, extended: extended}),
         }).catch(e => {
             throw Error(e.data)
         })).map(d => Models.parseValues(d, Models.TRANSACTION))
@@ -194,10 +194,10 @@ export const Transaction = {
     /**
      * Scan transactions by from and token
      */
-    scanByFromToken: async ({from, token, signature=null, created=null, sort='DESC', limit=25}) => {
+    scanByFromToken: async ({from, token, signature=null, created=null, sort='DESC', limit=25, extended=null}) => {
         return (await $fetch(Config.interface+'/transactions', {
             method: 'GET',
-            params: Utils.strip({from: from, token: token, signature: signature, created: created, sort: sort, limit: limit}),
+            params: Utils.strip({from: from, token: token, signature: signature, created: created, sort: sort, limit: limit, extended: extended}),
         }).catch(e => {
             throw Error(e.data)
         })).map(d => Models.parseValues(d, Models.TRANSACTION))
@@ -205,10 +205,10 @@ export const Transaction = {
     /**
      * Scan transactions by to and token
      */
-    scanByToToken: async ({to, token, signature=null, created=null, sort='DESC', limit=25}) => {
+    scanByToToken: async ({to, token, signature=null, created=null, sort='DESC', limit=25, extended=null}) => {
         return (await $fetch(Config.interface+'/transactions', {
             method: 'GET',
-            params: Utils.strip({to: to, token: token, signature: signature, created: created, sort: sort, limit: limit}),
+            params: Utils.strip({to: to, token: token, signature: signature, created: created, sort: sort, limit: limit, extended: extended}),
         }).catch(e => {
             throw Error(e.data)
         })).map(d => Models.parseValues(d, Models.TRANSACTION))
