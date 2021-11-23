@@ -1,8 +1,6 @@
-import { Transaction } from '../modules/transaction'
-import { Pool } from '../modules/pool'
-import { Config } from '../library/config'
-import { Models } from '../library/models'
+import { Instruction } from './instruction'
 import { Utils } from '../library/utils'
+import { Pool } from '../modules/pool'
 
 export class Vote {
     public pool
@@ -27,35 +25,46 @@ export class Vote {
      * Transfer to vote pool
      */
     transfer({amount=0, answer=null, number=null}, tx={}) {
-        if ((this.pool.candidates && !answer) || (this.pool.candidates && number)) throw Error('validation: incorrect answer')
+        if ((this.pool.candidates && !answer) || (this.pool.candidates && number)) throw Error('answer:invalid')
 
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            token: this.pool.token,
-            amount: amount,
+        return Instruction.wrap({
             function: 'vote.transfer',
-            message: JSON.stringify(Utils.strip({answer: answer, number: number})),
-        }})
+            pool: this.pool.address,
+            amount: Utils.amount(amount),
+            answer: answer,
+            number: number,
+        }, tx)
     }
 
     /**
      * Claim from vote pool
      */
     claim({claim}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            token: claim,
+        return Instruction.wrap({
             function: 'vote.claim',
-        }})
+            pool: this.pool.address,
+            claim: claim,
+        }, tx)
     }
 
     /**
      * Resolve vote pool
      */
     resolve(tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
+        return Instruction.wrap({
             function: 'vote.resolve',
-        }})
+            pool: this.pool.address,
+        }, tx)
+    }
+
+    /**
+     * Set accepted answer
+     */
+    oracle({answer}, tx={}) {
+        return Instruction.wrap({
+            function: 'vote.oracle',
+            pool: this.pool.address,
+            answer: answer,
+        }, tx)
     }
 }

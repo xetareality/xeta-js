@@ -31,135 +31,129 @@ export const Models = {
         if (!keys.every(k => fields.includes(k))) throw Error('input: invalid fields')
     },
     /**
-     * Parse values
-     */
-    parseValues: (object, model) => {
-        if (!object) return
-        
-        return Object.fromEntries(Object.entries(object)
-            .map(e => {
-                if (!Object.keys(model).includes(e[0])) return e
-
-                var t: string = model[e[0]][0]
-                var v: any = e[1]
-
-                if (['string', 'text'].includes(t))
-                    try {
-                        v = JSON.parse(v)
-                    } catch(e) {}
-
-                if (t == 'timestamp') v = Big(v)
-                else if (t == 'integer') v = Big(v)
-                else if (t == 'number') v = Big(v)
-                else if (t == 'boolean') v = v == 'true'
-
-                return [e[0], v]
-            }))
-    },
-    /**
      * Validate formats
      */
-    validFormats: (object: any, model): void => {
-        var extended = ['pool.create', 'token.create', 'token.update', 'transaction.batch', 'token.batch', 'allowance.batch'].includes(object.function)
-        
+    formats: (object, model) => {
         Object.entries(object).forEach(e => {
-            if (!Object.keys(model).includes(e[0])) throw Error('input contains invalid attribute '+e[0])
+            var t = model[e[0]][0]
+            var f = e[0]
+            var v = e[1]
 
-            var t: string = model[e[0]][0]
-            var v: any = e[1]
+            if (v == undefined || v == null) return
+            if (!Object.keys(model).includes(f)) throw Error(f+':invalid')
 
-            // Parse string integers and decimals as big
-            if (t == 'integer') object[e[0]] = Big(v).round()
-            else if (t == 'timestamp') object[e[0]] = Big(v).round()
-            else if (t == 'number') object[e[0]] = Big(v).round(8)
-
-            if (['integer', 'number', 'timestamp'].includes(t)) v = Big(v)
-
-            if (t == 'string' && typeof v == 'string' && ((extended && v.length <= 8192) || v.length <= 256)) return
-            else if (t == 'strings' && v instanceof Array && v.every(a => typeof a == 'string' && v.length <= 256) && v.length && v.length <= 100 && v.length == Utils.unique(v).length) return
+            if (t == 'string' && typeof v == 'string' && v.length <= 256) return
+            else if (t == 'strings' && v instanceof Array && v.length && v.length <= 100 && v.length == Utils.unique(v).length && v.every(v => typeof v == 'string' && v.length <= 256)) return
+            else if (t == 'number' && typeof v == 'number' && v >= 0 && v <= 1e15 && Big(v).eq(Big(v).round(8))) return
+            else if (t == 'numbers' && v instanceof Array && v.length && v.length <= 100 && v.length == Utils.unique(v).length && v.every(v => typeof v == 'number' && v >= 0 && v <= 1e15 && Big(v).eq(Big(v).round(8)))) return
             else if (t == 'hash' && typeof v == 'string' && v.length >= 32 && v.length <= 44) return
-            else if (t == 'hashes' && v instanceof Array && v.every(a => typeof a == 'string' && a.length >= 32 && a.length <= 44 && v.length && v.length <= 100 && v.length == Utils.unique(v).length)) return
-            else if (t == 'timestamp' && v.gte(1e12) && v.lt(1e13)) return
-            else if (t == 'integer' && v.gte(0) && v.lte(1e15)) return
-            else if (t == 'number' && v.gte(0) && v.lte(1e15)) return
-            else if (t == 'boolean' && typeof v == 'boolean') return
+            else if (t == 'hashes' && v instanceof Array && v.length && v.length <= 100 && v.length == Utils.unique(v).length && v.every(v => typeof v == 'string' && v.length >= 32 && v.length <= 44)) return
             else if (t == 'text' && typeof v == 'string' && v.length <= 8192) return
-            else throw Error('input: incorrect format for '+e[0])
+            else if (t == 'integer' && typeof v == 'number' && Math.round(v) == v && v >= 0 && v <= 1e15) return
+            else if (t == 'timestamp' && typeof v == 'number' && Math.round(v) == v && v >= 1e12 && v < 1e13) return
+            else if (t == 'amount' && typeof v == 'string' && Big(v).eq(Big(v).round(8)) && Big(v).gte(0) && Big(v).lte(1e15)) return
+            else if (t == 'boolean' && typeof v == 'boolean') return
+            else if (t == 'object' && v instanceof Object) return
+            else if (t == 'index' && typeof v == 'string' && v.length == 8) return
+            else throw Error(f+':format')
         })
     },
     TRANSACTION: {
+        hash: ['hash'],
         signature: ['string'],
-        from: ['hash'],
-        to: ['hash'],
         sender: ['hash'],
-        token: ['hash'],
-        amount: ['number'],
-        fee: ['number'],
+        fee: ['amount'],
+        instructions: ['object'],
         nonce: ['integer'],
         created: ['timestamp'],
-        message: ['string'],
-        function: ['string'],
-        delegate: ['boolean'],
+        sponsored: ['boolean'],
+        period: ['integer'],
+        partition: ['string'],
+        outputs: ['object'],
         error: ['string'],
-        origin: ['string'],
-        outputs: ['strings'],
         confirmed: ['timestamp'],
         confirmations: ['integer'],
-        fromBalance: ['number'],
-        toBalance: ['number'],
-        payerBalance: ['number'],
+    },
+    TRANSFER: {
+        hash: ['hash'],
+        sender: ['hash'],
+        from: ['hash'],
+        to: ['hash'],
+        token: ['hash'],
+        amount: ['amount'],
+        created: ['timestamp'],
+        message: ['string'],
+        origin: ['hash'],
+        fromToken: ['index'],
+        toToken: ['index'],
     },
     BALANCE: {
+        hash: ['hash'],
         address: ['hash'],
         token: ['hash'],
-        amount: ['number'],
+        amount: ['amount'],
     },
     ALLOWANCE: {
         hash: ['hash'],
         token: ['hash'],
         address: ['hash'],
         spender: ['hash'],
-        amount: ['number'],
+        amount: ['amount'],
         created: ['timestamp'],
-        origin: ['string'],
+        origin: ['hash'],
     },
     TOKEN: {
         address: ['hash'],
         creator: ['hash'],
         name: ['string'],
         created: ['timestamp'],
-        origin: ['string'],
+        origin: ['hash'],
+
         description: ['string'],
         links: ['strings'],
-        meta: ['text'],
+        meta: ['object'],
         icon: ['string'],
-        ticker: ['string'],
-        supply: ['integer'],
-        reserve: ['integer'],
-        owner: ['hash'],
+
+        symbol: ['string'],
+        supply: ['amount'],
+        reserve: ['amount'],
+
         object: ['string'],
-        frozen: ['boolean'],
-        processed: ['timestamp'],
-        category: ['string'],
-        ownerCategory: ['string'],
-        creatorCategory: ['string'],
         mime: ['string'],
-        hash: ['string'],
-        fingerprint: ['string'],
-        cluster: ['string'],
-        claim: ['hash'],
-        holder: ['hash'],
-        issuer: ['hash'],
+        owner: ['hash'],
+        frozen: ['boolean'],
+        category: ['string'],
+        ownerCategory: ['index'],
+        creatorCategory: ['index'],
+    },
+    CLAIM: {
+        hash: ['hash'],
+        creator: ['hash'],
+        created: ['timestamp'],
+        owner: ['hash'],
         token: ['hash'],
-        tokenAmount: ['number'],
-        xetaAmount: ['number'],
+        tokenAmount: ['amount'],
+        xetaAmount: ['amount'],
         expires: ['timestamp'],
         unlocks: ['timestamp'],
-        random: ['number'],
-        answer: ['hash'],
-        number: ['number'],
+        origin: ['hash'],
         resolved: ['timestamp'],
-        resolution: ['string'],
+        resolution: ['hash'],
+
+        frozen: ['boolean'],
+        category: ['string'],
+        meta: ['object'],
+        answer: ['string'],
+        number: ['number'],
+        holderCategory: ['index'],
+        issuerCategory: ['index'],
+
+        holder: ['index'],
+        issuer: ['index'],
+        holderToken: ['index'],
+        issuerToken: ['index'],
+        issuerHolder: ['index'],
+        issuerHolderToken: ['index'],
     },
     POOL: {
         address: ['hash'],
@@ -167,54 +161,58 @@ export const Models = {
         token: ['hash'],
         program: ['string'],
         created: ['timestamp'],
-        origin: ['string'],
+        origin: ['hash'],
+        tokenProgram: ['index'],
+        
         name: ['string'],
         mechanism: ['string'],
-        candidates: ['hashes'],
+        candidates: ['strings'],
         rate: ['number'],
         percentage: ['number'],
         probability: ['number'],
-        answers: ['hashes'],
-        meta: ['text'],
+        answers: ['strings'],
+        meta: ['object'],
+
         expires: ['timestamp'],
-        minAmount: ['number'],
-        maxAmount: ['number'],
+        minAmount: ['amount'],
+        maxAmount: ['amount'],
         minTime: ['integer'],
         maxTime: ['integer'],
         transfersLimit: ['integer'],
         claimsLimit: ['integer'],
-        tokenLimit: ['number'],
-        xetaLimit: ['number'],
-        tokenTarget: ['number'],
-        xetaTarget: ['number'],
-        xetaBalance: ['number'],
-        tokenBalance: ['number'],
-        xetaTurnover: ['number'],
-        tokenTurnover: ['number'],
+        tokenLimit: ['amount'],
+        xetaLimit: ['amount'],
+        tokenTarget: ['amount'],
+        xetaTarget: ['amount'],
+
+        xetaBalance: ['amount'],
+        tokenBalance: ['amount'],
+        xetaTurnover: ['amount'],
+        tokenTurnover: ['amount'],
         transfersCount: ['integer'],
         claimsCount: ['integer'],
         closed: ['boolean'],
         leader: ['hash'],
     },
-    CREDENTIALS: {
+    CREDENTIAL: {
         hash: ['hash'],
         seed: ['string'],
         password: ['hash'],
-        'public': ['hash'],
-        'private': ['hash'],
+        public: ['hash'],
+        private: ['hash'],
         created: ['timestamp'],
     },
     CANDLE: {
         key: ['string'],
         period: ['string'],
         time: ['integer'],
-        open: ['number'],
-        high: ['number'],
-        low: ['number'],
-        close: ['number'],
-        volume: ['number'],
-        turnover: ['number'],
+        open: ['amount'],
+        high: ['amount'],
+        low: ['amount'],
+        close: ['amount'],
         change: ['number'],
+        volume: ['amount'],
+        turnover: ['amount'],
         trades: ['integer'],
         first: ['timestamp'],
         last: ['timestamp'],
@@ -224,5 +222,13 @@ export const Models = {
         time: ['integer'],
         until: ['integer'],
         value: ['number'],
-    }
+    },
+    LOOKUP: {
+        token: ['hash'],
+        hash: ['string'],
+        fingerprint: ['string'],
+        cluster: ['string'],
+        processed: ['timestamp'],
+        created: ['timestamp'],
+    },
 }

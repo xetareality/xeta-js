@@ -1,86 +1,72 @@
-import { $fetch } from 'ohmyfetch'
-import { Models } from '../library/models'
-import { Config } from '../library/config'
+import { Instruction } from './instruction'
+import { Resource } from './resource'
+import { Instruction } from './instruction'
 import { Utils } from '../library/utils'
-import { Transaction } from './transaction'
+import { Hashed } from '../library/hashed'
 
 export const Allowance = {
     /**
-     * Create allowance for spender address
+     * Update allowance for spender address
      */
-    create: async ({token, spender, amount}, tx={}) => {
-        var result = await Transaction.create({...tx, ...{
+    update: async ({spender, token, amount}, tx={}) => {
+        return Instruction.wrap({
+            function: 'allowance.update',
+            spender: spender,
             token: token,
-            function: 'allowance.create',
-            message: JSON.stringify({spender: spender, amount: amount}),
-        }})
-
-        result.data = Models.parseValues(result.data, Models.ALLOWANCE)
-        return result
+            amount: Utils.amount(amount),
+        }, tx)
     },
     /**
-     * Batch create allowances
+     * Read allowance by hash
      */
-    batch: async ({token, allowances}, tx={}) => {
-        if (allowances.length > 20) throw Error('input: batch exceeds maximum items')
-
-        allowances.forEach(a => {
-            Models.requiredFields(a, ['spender', 'amount'])
-            Models.exclusiveFields(a, ['spender', 'amount'])
-            Models.validFormats(a, Models.ALLOWANCE)
-        })
-
-        var result = await Transaction.create({...tx, ...{
-            token: token,
-            function: 'allowance.batch',
-            message: JSON.stringify(allowances),
-        }})
-
-        result.data = result.data.map(d => Models.parseValues(d, Models.ALLOWANCE))
-        return result
+    read: async ({hash}, args={}) => {
+        return Resource.read({...{
+            type: 'allowance',
+            key: hash,
+        }, ...args})
     },
     /**
-     * Get allowance by address, token and spender
+     * List allowances by hashes
      */
-    get: async ({address, token, spender, extended=null}) => {
-        return Models.parseValues(await $fetch(Config.interface+'/allowance', {
-            method: 'GET',
-            params: Utils.strip({address: address, token: token, spender: spender, extended: extended}),
-        }).catch(e => {
-            throw Error(e.data)
-        }), Models.ALLOWANCE)
+    list: async ({hashes}, args={}) => {
+        return Resource.list({...{
+            type: 'allowance',
+            keys: hashes,
+        }, ...args})
     },
     /**
-     * Get allowance by hash
+     * Read allowance by address, token and spender
      */
-    getByHash: async ({hash, extended=null}) => {
-        return Models.parseValues(await $fetch(Config.interface+'/allowance', {
-            method: 'GET',
-            params: Utils.strip({hash: hash, extended: extended}),
-        }).catch(e => {
-            throw Error(e.data)
-        }), Models.ALLOWANCE)
+    readAddressTokenSpender: async ({address, token, spender}, args={}) => {
+        return Resource.read({...{
+            type: 'allowance',
+            key: await Hashed.allowance({address: address, token: token, spender: spender}),
+        }, ...args})
     },
     /**
-     * Scan allowances by address
+     * Scan allowances by address, sort by created
      */
-    scanByAddress: async ({address, hash=null, created=null, sort='DESC', limit=25, extended=null}) => {
-        return (await $fetch(Config.interface+'/allowances', {
-            method: 'GET',
-            params: Utils.strip({address: address, hash: hash, created: created, sort: sort, limit: limit, extended: extended}),
-        }).catch(e => {
-            throw Error(e.data)
-        })).map(d => Models.parseValues(d, Models.ALLOWANCE))
+    scanByAddress: async ({address, created=null, hash=null}, args={}) => {
+        return Resource.scan({...{
+            type: 'allowance',
+            index: 'address',
+            indexValue: address,
+            sort: 'created',
+            sortValue: created,
+            keyValue: hash,
+        }, ...args})
     },
     /**
-     * Scan allowances by spender
+     * Scan allowances by spender, sort by created
      */
-    scanBySpender: async ({spender, hash=null, created=null, sort='DESC', limit=25, extended=null}) => {
-        return (await $fetch(Config.interface+'/allowances', {
-            method: 'GET',
-            params: Utils.strip({spender: spender, hash: hash, created: created, sort: sort, limit: limit, extended: extended}),
-        }).catch(e => {
-            throw Error(e.data)
-        })).map(d => Models.parseValues(d, Models.ALLOWANCE))
+    scanBySpender: async ({spender, created=null, hash=null}, args={}) => {
+        return Resource.scan({...{
+            type: 'allowance',
+            index: 'spender',
+            indexValue: spender,
+            sort: 'created',
+            sortValue: created,
+            keyValue: hash,
+        }, ...args})
     },
 }

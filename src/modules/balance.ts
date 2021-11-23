@@ -1,41 +1,60 @@
-import { $fetch } from 'ohmyfetch'
-import { Models } from '../library/models'
-import { Config } from '../library/config'
+import { Resource } from './resource'
+import { Instruction } from './instruction'
 import { Utils } from '../library/utils'
-import { Transaction } from './transaction'
+import { Hashed } from '../library/hashed'
 
 export const Balance = {
     /**
-     * Get balance by address and token
+     * Read balance by hash
      */
-    get: async ({address, token, extended=null}) => {
-        return Models.parseValues(await $fetch(Config.interface+'/balance', {
-            method: 'GET',
-            params: Utils.strip({address: address, token: token, extended: extended}),
-        }).catch(e => {
-            throw Error(e.data)
-        }), Models.BALANCE)
+    read: async ({hash}, args={}) => {
+        return Resource.read({...{
+            type: 'balance',
+            key: hash,
+        }, ...args})
     },
     /**
-     * Scan balances by address
+     * Read balance by address and token
      */
-    scanByAddress: async ({address, token=null, amount=null, sort='DESC', limit=25, extended=null}) => {
-        return (await $fetch(Config.interface+'/balances', {
-            method: 'GET',
-            params: Utils.strip({address: address, token: token, amount: amount, sort: sort, limit: limit, extended: extended}),
-        }).catch(e => {
-            throw Error(e.data)
-        })).map(d => Models.parseValues(d, Models.BALANCE))
+    readAddressToken: async ({address, token}, args={}) => {
+        return Resource.read({...{
+            type: 'balance',
+            key: await Hashed.balance({address: address, token: token}),
+        }, ...args})
     },
     /**
-     * Scan balances by address
+     * List balances by hashes
      */
-    scanByToken: async ({token, address=null, amount=null, sort='DESC', limit=25, extended=null}) => {
-        return (await $fetch(Config.interface+'/balances', {
-            method: 'GET',
-            params: Utils.strip({token: token, address: address, amount: amount, sort: sort, limit: limit, extended: extended}),
-        }).catch(e => {
-            throw Error(e.data)
-        })).map(d => Models.parseValues(d, Models.BALANCE))
+    list: async ({hashes}, args={}) => {
+        return Resource.list({...{
+            type: 'balance',
+            keys: hashes,
+        }, ...args})
+    },
+    /**
+     * Scan balances by address, sort by amount
+     */
+    scanAddressAmount: async ({address, amount=null, hash=null}, args={}) => {
+        return Resource.scan({...{
+            type: 'balance',
+            index: 'address',
+            indexValue: address,
+            sort: 'amount',
+            sortValue: amount,
+            keyValue: hash,
+        }, ...args})
+    },
+    /**
+     * Scan balances by token, sort by amount
+     */
+    scanTokenAmount: async ({token, amount=null, hash=null}, args={}) => {
+        return Resource.scan({...{
+            type: 'balance',
+            index: 'token',
+            indexValue: token,
+            sort: 'amount',
+            sortValue: amount,
+            keyValue: hash,
+        }, ...args})
     },
 }

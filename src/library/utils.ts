@@ -1,4 +1,4 @@
-// import * as forge from 'node-forge'
+import Big from 'big.js'
 import { sha256 } from 'js-sha256';
 
 export const Utils = {
@@ -36,17 +36,14 @@ export const Utils = {
         return out
     },
     /**
-     * Returns global var
-     */
-    global: () => {
-        if (typeof globalThis !== 'undefined') return globalThis
-        if (typeof self !== 'undefined') return self
-        if (typeof window !== 'undefined') return window
-        if (typeof global !== 'undefined') return global
-        throw new Error('unable to locate global object')
-    },
-    /**
      * Sleep function
      */
-    sleep: (ms: number) => new Promise(r => setTimeout(r, ms)),
+    sleep: (s: number) => new Promise(r => setTimeout(r, s*1000)),
+    /**
+     * Format amount to amount string
+     */
+    amount: (amount) => {
+        if (amount == null) return
+        return Big(amount).round(8).toString()
+    }
 }

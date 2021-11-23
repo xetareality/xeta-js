@@ -1,8 +1,6 @@
-import { Transaction } from '../modules/transaction'
-import { Pool } from '../modules/pool'
-import { Config } from '../library/config'
-import { Models } from '../library/models'
+import { Instruction } from './instruction'
 import { Utils } from '../library/utils'
+import { Pool } from '../modules/pool'
 
 export class Royalty {
     public pool
@@ -27,51 +25,51 @@ export class Royalty {
      * Transfer to royalty pool
      */
     transfer({token}, tx={}) {
-        this.claim({token}, tx)
+        return this.claim({token}, tx)
     }
 
     /**
      * Claim from royalty pool
      */
     claim({token}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            token: token,
+        return Instruction.wrap({
             function: 'royalty.claim',
-        }})
+            pool: this.pool.address,
+            token: token,
+        }, tx)
     }
 
     /**
      * Deposit to royalty pool
      */
-    deposit({amount, expires=null, unlocks=null}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            token: this.pool.token,
-            amount: amount,
+    deposit({amount, unlocks=null, expires=null}, tx={}) {
+        return Instruction.wrap({
             function: 'royalty.deposit',
-            message: expires || unlocks ? JSON.stringify(Utils.strip({expires: expires, unlocks: unlocks})) : null,
-        }})
+            pool: this.pool.address,
+            amount: Utils.amount(amount),
+            unlocks: unlocks,
+            expires: expires,
+        }, tx)
     }
 
     /**
      * Withdraw from royalty pool
      */
     withdraw({claim}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            token: claim,
+        return Instruction.wrap({
             function: 'royalty.withdraw',
-        }})
+            pool: this.pool.address,
+            claim: claim,
+        }, tx)
     }
 
     /**
      * Close royalty pool
      */
     close(tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
+        return Instruction.wrap({
             function: 'royalty.close',
-        }})
+            pool: this.pool.address,
+        }, tx)
     }
 }

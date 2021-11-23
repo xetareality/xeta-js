@@ -1,7 +1,6 @@
-import { Transaction } from '../modules/transaction'
+import { Instruction } from './instruction'
+import { Utils } from '../library/utils'
 import { Pool } from '../modules/pool'
-import { Config } from '../library/config'
-import { Models } from '../library/models'
 
 export class Lending {
     public pool
@@ -26,58 +25,58 @@ export class Lending {
      * Transfer to lending pool
      */
     transfer({amount, collateralization=2.5}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            token: Config.xetaAddress,
+        return Instruction.wrap({
+            function: 'royalty.transfer',
+            pool: this.pool.address,
             amount: amount,
-            message: JSON.stringify({collateralization: collateralization}),
-            function: 'lending.transfer',
-        }})
+            collateralization: collateralization,
+        }, tx)
     }
 
     /**
      * Settle claim from lending pool
      */
     settle({claim, amount}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            token: this.pool.token,
-            amount: amount,
-            message: JSON.stringify({token: claim}),
-            function: 'lending.settle',
-        }})
+        return Instruction.wrap({
+            function: 'royalty.settle',
+            pool: this.pool.address,
+            claim: claim,
+            amount: Utils.amount(amount),
+        }, tx)
     }
 
     /**
      * Liquidate claim from lending pool
      */
     liquidate({claim}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            message: JSON.stringify({token: claim}),
-            function: 'lending.liquidate',
-        }})
+        return Instruction.wrap({
+            function: 'royalty.liquidate',
+            pool: this.pool.address,
+            claim: claim,
+        }, tx)
     }
 
     /**
      * Deposit to lending pool
      */
-    deposit({amount}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            token: this.pool.token,
-            amount: amount,
-            function: 'lending.deposit',
-        }})
+    deposit({amount, unlocks=None, expires=None}, tx={}) {
+        return Instruction.wrap({
+            function: 'royalty.deposit',
+            pool: this.pool.address,
+            amount: Utils.amount(amount),
+            unlocks: unlocks,
+            expires: expires,
+        }, tx)
     }
 
     /**
      * Withdraw from lending pool
      */
     withdraw({claim}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            token: claim,
-            function: 'lending.withdraw',
-        }})
+        return Instruction.wrap({
+            function: 'royalty.withdraw',
+            pool: this.pool.address,
+            claim: claim,
+        }, tx)
     }
+}

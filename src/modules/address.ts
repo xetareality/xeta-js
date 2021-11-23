@@ -1,14 +1,28 @@
-import { $fetch } from 'ohmyfetch'
-import { Models } from '../library/models'
-import { Config } from '../library/config'
+import { Instruction } from './instruction'
+import { Resource } from './resource'
+import { Instruction } from './instruction'
 import { Utils } from '../library/utils'
-import { Transaction } from './transaction'
+import { Config } from '../library/config'
+import { $fetch } from 'ohmyfetch'
 
 export const Address = {
     /**
-     * Get address data (account & balance)
+     * Update (or create) account
      */
-    get: async ({address}) => {
+    update: async ({name, object=null, description=null, links=null, meta=null}, tx={}) => {
+        return Instruction.wrap({
+            function: 'account.update',
+            name: name,
+            object: object,
+            description: description,
+            links: links,
+            meta: meta,
+        }, tx)
+    },
+    /**
+     * Read account data for an address (pool, token, balance)
+     */
+    read: async ({address}) => {
         var result = await $fetch(Config.interface+'/address', {
             method: 'GET',
             params: {address: address},
@@ -16,27 +30,6 @@ export const Address = {
             throw Error(e.data)
         })
 
-        return {
-            pool: Models.parseValues(result.pool, Models.POOL),
-            balance: Models.parseValues(result.balance, Models.BALANCE),
-            account: Models.parseValues(result.account, Models.TOKEN)}
-    },
-    /**
-     * Update address values
-     */
-    update: async ({name=null, object=null, description=null, links=null, meta=null}, tx={}) => {
-        var result = await Transaction.create({...tx, ...{
-            function: 'address.update',
-            message: JSON.stringify(Utils.strip({
-                name: name,
-                object: object,
-                description: description,
-                links: links,
-                meta: meta,
-            })),
-        }})
-
-        result.data = Models.parseValues(result.data, Models.TOKEN)
-        return result
+        return {pool: result.pool, balance: result.balance, token: result.token}
     },
 }

@@ -1,7 +1,6 @@
-import { Transaction } from '../modules/transaction'
+import { Instruction } from './instruction'
+import { Utils } from '../library/utils'
 import { Pool } from '../modules/pool'
-import { Config } from '../library/config'
-import { Models } from '../library/models'
 
 export class Lottery {
     public pool
@@ -26,64 +25,75 @@ export class Lottery {
      * Transfer to lottery pool
      */
     transfer({amount}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            amount: amount,
+        return Instruction.wrap({
             function: 'lottery.transfer',
-        }})
+            pool: this.pool.address,
+            amount: Utils.amount(amount),
+        }, tx)
     }
 
     /**
      * Claim from lottery pool
      */
     claim({claim}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            token: claim,
+        return Instruction.wrap({
             function: 'lottery.claim',
-        }})
+            pool: this.pool.address,
+            claim: claim,
+        }, tx)
+    }
+
+    /**
+     * Resolve NFT lottery pool
+     */
+    resolve(tx={}) {
+        return Instruction.wrap({
+            function: 'lottery.resolve',
+            pool: this.pool.address,
+        }, tx)
     }
 
     /**
      * Deposit to lottery pool
      */
-    deposit({amount}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            token: this.pool.token,
-            amount: amount,
+    deposit({amount=null, unlocks=null, expires=null}, tx={}) {
+        return Instruction.wrap({
             function: 'lottery.deposit',
-        }})
+            pool: this.pool.address,
+            amount: Utils.amount(amount),
+            unlocks: unlocks,
+            expires: expires,
+        }, tx)
     }
 
     /**
      * Withdraw from lottery pool
      */
     withdraw({claim}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            token: claim,
+        return Instruction.wrap({
             function: 'lottery.withdraw',
-        }})
+            pool: this.pool.address,
+            claim: claim,
+        }, tx)
     }
 
     /**
      * Close lottery pool
      */
     close(tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
+        return Instruction.wrap({
             function: 'lottery.close',
-        }})
+            pool: this.pool.address,
+        }, tx)
     }
 
     /**
      * Clear lottery pool
      */
     clear(tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
+        return Instruction.wrap({
             function: 'lottery.clear',
-        }})
+            pool: this.pool.address,
+        }, tx)
     }
 }

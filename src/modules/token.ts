@@ -1,295 +1,173 @@
-import { $fetch } from 'ohmyfetch'
-import { Models } from '../library/models'
-import { Config } from '../library/config'
+import { Instruction } from './instruction'
+import { Resource } from './resource'
+import { Instruction } from './instruction'
 import { Utils } from '../library/utils'
-import { Transaction } from './transaction'
+import { Models } from '../library/models'
 
 export const Token = {
     /**
      * Create token
      */
-    create: async ({name, ticker=null, supply=null, reserve=null, description=null, links=null, meta=null, icon=null, owner=null, category=null, object=null, mime=null, token=null, tokenAmount=null, xetaAmount=null, expires=null, unlocks=null, answer=null, number=null}, tx={}) => {
-        if (parseInt(supply) == 0) throw Error('validation: supply cannot be 0')
-        if (supply && parseInt(supply) != 1 && !ticker) throw Error('validation: fungible tokens require a ticker')
-
-        return Transaction.create({...tx, ...{
+    create: async ({name, symbol=null, supply=null, reserve=null, description=null, links=null, meta=null, icon=null, owner=null, frozen=null, category=null, object=null, mime=null}, tx={}) => {
+        var token = Utils.strip({
             function: 'token.create',
-            message: JSON.stringify(Utils.strip({
-                name: name,
-                ticker: ticker,
-                supply: supply,
-                reserve: reserve,
-                description: description,
-                links: links,
-                meta: meta,
-                icon: icon,
-                owner: owner,
-                category: category,
-                object: object,
-                mime: mime,
-                token: token,
-                tokenAmount: tokenAmount,
-                xetaAmount: xetaAmount,
-                expires: expires,
-                unlocks: unlocks,
-                answer: answer,
-                number: number,
-            })),
-        }})
+            name: name,
+            symbol: symbol,
+            supply: Utils.amount(supply),
+            reserve: Utils.amount(reserve),
+            description: description,
+            links: links,
+            meta: meta,
+            icon: icon,
+            owner: owner,
+            frozen: frozen,
+            category: category,
+            object: object,
+            mime: mime,
+        })
+
+        if (supply) {
+            Models.requiredFields(token, ['name', 'symbol', 'supply'])
+            Models.exclusiveFields(token, ['function', 'name', 'description', 'links', 'meta', 'icon', 'symbol', 'supply', 'reserve'])
+        } else {
+            Models.requiredFields(token, ['name'])
+            Models.exclusiveFields(token, ['function', 'name', 'description', 'links', 'meta', 'icon', 'owner', 'frozen', 'category', 'object', 'mime'])
+        }
+
+        return Instruction.wrap(token, tx)
     },
     /**
      * Update specified values of an token
      */
-    update: async ({token, description=null, links=null, meta=null, icon=null, category=null, frozen=null}, tx={}) => {
-        return Transaction.create({...tx, ...{
-            token: token,
+    update: async ({token, name=null, description=null, links=null, meta=null, icon=null, frozen=null, category=null, object=null, mime=null}, tx={}) => {
+        return Instruction.wrap({
             function: 'token.update',
-            message: JSON.stringify(Utils.strip({
-                description: description,
-                links: links,
-                meta: meta,
-                icon: icon,
-                category: category,
-                frozen: frozen,
-            })),
-        }})
+            token: token,
+            name: name,
+            description: description,
+            links: links,
+            meta: meta,
+            icon: icon,
+            frozen: frozen,
+            category: category,
+            object: object,
+            mime: mime,
+        }, tx)
     },
     /**
      * Mint from reserve
      */
     mint: async ({token, amount}, tx={}) => {
-        return Transaction.create({...tx, ...{
-            token: token,
+        return Instruction.wrap({
             function: 'token.mint',
-            message: JSON.stringify({amount: amount}),
-        }})
-    },
-    /**
-     * Transfer from token
-     */
-    transfer: async({from, to, token, amount}, tx={}) => {
-        return Transaction.create({...tx, ...{
-            from: from,
-            to: to,
             token: token,
-            amount: amount,
+            amount: Utils.amount(amount),
+        }, tx)
+    },
+    /**
+     * Transfer token
+     */
+    transfer: async ({token, to}, tx={}) => {
+        return Instruction.wrap({
             function: 'token.transfer',
-        }})
+            token: token,
+            to: to,
+        }, tx)
     },
     /**
-     * Batch create NFTs
-     * Fungible tokens cannot be created in batch due to swap pool creation
+     * Read token by address
      */
-    batch: async ({tokens}, tx={}) => {
-        if (tokens.length > 20) throw Error('input: batch exceeds maximum items')
-
-        tokens.forEach(t => {
-            Models.requiredFields(t, ['name'])
-            Models.exclusiveFields(t, ['name', 'description', 'links', 'meta', 'icon', 'owner', 'category', 'object', 'mime', 'token', 'tokenAmount', 'xetaAmount', 'expires', 'unlocks', 'answer', 'number'])
-            Models.validFormats(t, Models.TOKEN)
-        })
-
-        return Transaction.create({...tx, ...{
-            function: 'token.batch',
-            message: JSON.stringify(tokens),
-        }})
+    read: async ({address}, args={}) => {
+        return Resource.read({...{
+            type: 'token',
+            key: address,
+        }, ...args})
     },
     /**
-     * Get token by address
+     * List tokens by addresses
      */
-    get: async ({address}) => {
-        return Models.parseValues(await $fetch(Config.interface+'/token', {
-            method: 'GET',
-            params: {address: address},
-        }).catch(e => {
-            throw Error(e.data)
-        }), Models.TOKEN)
+    list: async ({addresses}, args={}) => {
+        return Resource.list({...{
+            type: 'token',
+            keys: addresses,
+        }, ...args})
     },
     /**
-     * Batch get tokens by addresses
+     * Scan tokens by creator, sort by created
      */
-    batchGet: async ({addresses}) => {
-        return (await $fetch(Config.interface+'/tokens', {
-            method: 'GET',
-            params: {addresses: addresses.join(',')},
-        }).catch(e => {
-            throw Error(e.data)
-        })).map(t => Models.parseValues(t, Models.TOKEN))
+    scanCreatorCreated: async ({creator, created=null, address=null}, args={}) => {
+        return Resource.scan({...{
+            type: 'token',
+            index: 'creator',
+            indexValue: creator,
+            sort: 'created',
+            sortValue: created,
+            keyValue: address,
+        }, ...args})
     },
     /**
-     * Scan tokens by creator
+     * Scan tokens by name, sort by created
      */
-    scanByCreator: async ({creator, address=null, created=null, sort='DESC', limit=25}) => {
-        return (await $fetch(Config.interface+'/tokens', {
-            method: 'GET',
-            params: Utils.strip({creator: creator, address: address, created: created, sort: sort, limit: limit}),
-        }).catch(e => {
-            throw Error(e.data)
-        })).map(t => Models.parseValues(t, Models.TOKEN))
+    scanNameCreated: async ({name, created=null, address=null}, args={}) => {
+        return Resource.scan({...{
+            type: 'token',
+            index: 'name',
+            indexValue: name,
+            sort: 'created',
+            sortValue: created,
+            keyValue: address,
+        }, ...args})
     },
     /**
-     * Scan tokens by ticker
+     * Scan tokens by symbol, sort by created
      */
-    scanByTicker: async ({ticker, address=null, created=null, sort='DESC', limit=25}) => {
-        return (await $fetch(Config.interface+'/tokens', {
-            method: 'GET',
-            params: Utils.strip({ticker: ticker, address: address, created: created, sort: sort, limit: limit}),
-        }).catch(e => {
-            throw Error(e.data)
-        })).map(t => Models.parseValues(t, Models.TOKEN))
+    scanSymbolCreated: async ({symbol, created=null, address=null}, args={}) => {
+        return Resource.scan({...{
+            type: 'token',
+            index: 'symbol',
+            indexValue: symbol,
+            sort: 'created',
+            sortValue: created,
+            keyValue: address,
+        }, ...args})
     },
     /**
-     * Scan tokens by name
+     * Scan tokens by owner, sort by created
      */
-    scanByName: async ({name, address=null, created=null, sort='DESC', limit=25}) => {
-        return (await $fetch(Config.interface+'/tokens', {
-            method: 'GET',
-            params: Utils.strip({name: name, address: address, created: created, sort: sort, limit: limit}),
-        }).catch(e => {
-            throw Error(e.data)
-        })).map(t => Models.parseValues(t, Models.TOKEN))
+    scanOwnerCreated: async ({owner, created=null, address=null}, args={}) => {
+        return Resource.scan({...{
+            type: 'token',
+            index: 'owner',
+            indexValue: owner,
+            sort: 'created',
+            sortValue: created,
+            keyValue: address,
+        }, ...args})
     },
     /**
-     * Scan tokens by owner
+     * Scan tokens by owner and category, sort by created
      */
-    scanByOwner: async ({owner, address=null, created=null, sort='DESC', limit=25}) => {
-        return (await $fetch(Config.interface+'/tokens', {
-            method: 'GET',
-            params: Utils.strip({owner: owner, address: address, created: created, sort: sort, limit: limit}),
-        }).catch(e => {
-            throw Error(e.data)
-        })).map(t => Models.parseValues(t, Models.TOKEN))
+    scanOwnerCategoryCreated: async ({owner, category, created=null, address=null}, args={}) => {
+        return Resource.scan({...{
+            type: 'token',
+            index: 'ownerCategory',
+            indexValue: (await Hashed.values([owner, category])).slice(-8),
+            sort: 'created',
+            sortValue: created,
+            keyValue: address,
+        }, ...args})
     },
     /**
-     * Scan tokens by owner and category
+     * Scan tokens by creator and category, sort by created
      */
-    scanByOwnerCategory: async ({owner, category=null, address=null, created=null, sort='DESC', limit=25}) => {
-        return (await $fetch(Config.interface+'/tokens', {
-            method: 'GET',
-            params: Utils.strip({owner: owner, category: category, address: address, created: created, sort: sort, limit: limit}),
-        }).catch(e => {
-            throw Error(e.data)
-        })).map(t => Models.parseValues(t, Models.TOKEN))
-    },
-    /**
-     * Scan tokens by creator and category
-     */
-    scanByCreatorCategory: async ({creator, category=null, address=null, created=null, sort='DESC', limit=25}) => {
-        return (await $fetch(Config.interface+'/tokens', {
-            method: 'GET',
-            params: Utils.strip({creator: creator, category: category, address: address, created: created, sort: sort, limit: limit}),
-        }).catch(e => {
-            throw Error(e.data)
-        })).map(t => Models.parseValues(t, Models.TOKEN))
-    },
-    /**
-     * Scan tokens by hash
-     */
-    scanByHash: async ({hash, address=null, created=null, sort='DESC', limit=25}) => {
-        return (await $fetch(Config.interface+'/tokens', {
-            method: 'GET',
-            params: Utils.strip({hash: hash, address: address, created: created, sort: sort, limit: limit}),
-        }).catch(e => {
-            throw Error(e.data)
-        })).map(t => Models.parseValues(t, Models.TOKEN))
-    },
-    /**
-     * Scan tokens by fingerprint
-     */
-    scanByFingerprint: async ({fingerprint, address=null, created=null, sort='DESC', limit=25}) => {
-        return (await $fetch(Config.interface+'/tokens', {
-            method: 'GET',
-            params: Utils.strip({fingerprint: fingerprint, address: address, created: created, sort: sort, limit: limit}),
-        }).catch(e => {
-            throw Error(e.data)
-        })).map(t => Models.parseValues(t, Models.TOKEN))
-    },
-    /**
-     * Scan tokens by cluster
-     */
-    scanByHash: async ({cluster, address=null, created=null, sort='DESC', limit=25}) => {
-        return (await $fetch(Config.interface+'/tokens', {
-            method: 'GET',
-            params: Utils.strip({cluster: cluster, address: address, created: created, sort: sort, limit: limit}),
-        }).catch(e => {
-            throw Error(e.data)
-        })).map(t => Models.parseValues(t, Models.TOKEN))
-    },
-    /**
-     * Scan tokens by claim
-     */
-    scanByClaim: async ({creator, owner, token, address=null, created=null, sort='DESC', limit=25}) => {
-        return (await $fetch(Config.interface+'/tokens', {
-            method: 'GET',
-            params: Utils.strip({creator: creator, owner: owner, token: token, address: address, created: created, sort: sort, limit: limit}),
-        }).catch(e => {
-            throw Error(e.data)
-        })).map(t => Models.parseValues(t, Models.TOKEN))
-    },
-    /**
-     * Scan tokens by holder
-     */
-    scanByHolder: async ({holder, address=null, created=null, sort='DESC', limit=25}) => {
-        return (await $fetch(Config.interface+'/tokens', {
-            method: 'GET',
-            params: Utils.strip({holder: holder, address: address, created: created, sort: sort, limit: limit}),
-        }).catch(e => {
-            throw Error(e.data)
-        })).map(t => Models.parseValues(t, Models.TOKEN))
-    },
-    /**
-     * Scan tokens by issuer
-     */
-    scanByIssuer: async ({issuer, address=null, created=null, sort='DESC', limit=25}) => {
-        return (await $fetch(Config.interface+'/tokens', {
-            method: 'GET',
-            params: Utils.strip({issuer: issuer, address: address, created: created, sort: sort, limit: limit}),
-        }).catch(e => {
-            throw Error(e.data)
-        })).map(t => Models.parseValues(t, Models.TOKEN))
-    },
-    /**
-     * Scan tokens by issuer sorted by amount
-     */
-    scanByIssuerAmount: async ({issuer, address=null, amount=null, sort='DESC', limit=25}) => {
-        return (await $fetch(Config.interface+'/tokens', {
-            method: 'GET',
-            params: Utils.strip({issuer: issuer, address: address, amount: amount, sort: sort, limit: limit}),
-        }).catch(e => {
-            throw Error(e.data)
-        })).map(t => Models.parseValues(t, Models.TOKEN))
-    },
-    /**
-     * Scan tokens by issuer sorted by random
-     */
-    scanByIssuerRandom: async ({issuer, address=null, random=null, sort='DESC', limit=25}) => {
-        return (await $fetch(Config.interface+'/tokens', {
-            method: 'GET',
-            params: Utils.strip({issuer: issuer, address: address, random: random, sort: sort, limit: limit}),
-        }).catch(e => {
-            throw Error(e.data)
-        })).map(t => Models.parseValues(t, Models.TOKEN))
-    },
-    /**
-     * Scan tokens by issuer and answer
-     */
-    scanByIssuerAnswer: async ({issuer, address=null, answer=null, sort='DESC', limit=25}) => {
-        return (await $fetch(Config.interface+'/tokens', {
-            method: 'GET',
-            params: Utils.strip({issuer: issuer, address: address, answer: answer, sort: sort, limit: limit}),
-        }).catch(e => {
-            throw Error(e.data)
-        })).map(t => Models.parseValues(t, Models.TOKEN))
-    },
-    /**
-     * Scan tokens by issuer and number
-     */
-    scanByIssuerNumber: async ({issuer, address=null, number=null, sort='DESC', limit=25}) => {
-        return (await $fetch(Config.interface+'/tokens', {
-            method: 'GET',
-            params: Utils.strip({issuer: issuer, address: address, number: number, sort: sort, limit: limit}),
-        }).catch(e => {
-            throw Error(e.data)
-        })).map(t => Models.parseValues(t, Models.TOKEN))
+    scanCreatorCategoryCreated: async ({creator, category, created=null, address=null}, args={}) => {
+        return Resource.scan({...{
+            type: 'token',
+            index: 'creatorCategory',
+            indexValue: (await Hashed.values([creator, category])).slice(-8),
+            sort: 'created',
+            sortValue: created,
+            keyValue: address,
+        }, ...args})
     },
 }

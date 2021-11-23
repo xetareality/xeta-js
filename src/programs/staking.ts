@@ -1,8 +1,6 @@
-import { Transaction } from '../modules/transaction'
-import { Pool } from '../modules/pool'
-import { Config } from '../library/config'
-import { Models } from '../library/models'
+import { Instruction } from './instruction'
 import { Utils } from '../library/utils'
+import { Pool } from '../modules/pool'
 
 export class Staking {
     public pool
@@ -26,50 +24,50 @@ export class Staking {
     /**
      * Transfer to staking pool
      */
-    transfer({amount, expires=null, unlocks=null}, tx={}) {
-        if (unlocks && unlocks < Date.now()+24*60*60*1000) throw Error('validation: below minimum time')
+    transfer({amount, unlocks=null, expires=null}, tx={}) {
+        if (unlocks && unlocks < Date.now()+24*60*60*1000) throw Error('invalid:time')
 
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            token: this.pool.token,
-            amount: amount,
+        return Instruction.wrap({
             function: 'staking.transfer',
-            message: expires || unlocks ? JSON.stringify(Utils.strip({expires: expires, unlocks: unlocks})) : null,
-        }})
+            pool: this.pool.address,
+            amount: Utils.amount(amount),
+            unlocks: unlocks,
+            expires: expires,
+        }, tx)
     }
 
     /**
      * Claim from staking pool
      */
     claim({claim}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            token: claim,
+        return Instruction.wrap({
             function: 'staking.claim',
-        }})
+            pool: this.pool.address,
+            claim: claim,
+        }, tx)
     }
 
     /**
      * Deposit to staking pool
      */
-    deposit({amount, expires=null, unlocks=null}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            token: this.pool.token,
-            amount: amount,
+    deposit({amount, unlocks=null, expires=null}, tx={}) {
+        return Instruction.wrap({
             function: 'staking.deposit',
-            message: expires || unlocks ? JSON.stringify(Utils.strip({expires: expires, unlocks: unlocks})) : null,
-        }})
+            pool: this.pool.address,
+            amount: Utils.amount(amount),
+            unlocks: unlocks,
+            expires: expires,
+        }, tx)
     }
 
     /**
      * Withdraw from staking pool
      */
     withdraw({claim}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            token: claim,
+        return Instruction.wrap({
             function: 'staking.withdraw',
-        }})
+            pool: this.pool.address,
+            claim: claim,
+        }, tx)
     }
 }

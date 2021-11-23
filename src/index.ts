@@ -1,16 +1,22 @@
 import { Address } from './modules/address'
 import { Allowance } from './modules/allowance'
-import { Audit } from './modules/audit'
 import { Balance } from './modules/balance'
 import { Candle } from './modules/candle'
-import { Credentials } from './modules/credentials'
+import { Claim } from './modules/claim'
+import { Credential } from './modules/credential'
+import { Instruction } from './modules/instruction'
+import { Lookup } from './modules/lookup'
 import { Pool } from './modules/pool'
+import { Resource } from './modules/resource'
+import { Search } from './modules/search'
 import { Statistic } from './modules/statistic'
 import { Token } from './modules/token'
 import { Transaction } from './modules/transaction'
+import { Transfer } from './modules/transfer'
 
 import { Auction } from './programs/auction'
 import { Launch } from './programs/launch'
+import { Lending } from './programs/lending'
 import { Lock } from './programs/lock'
 import { Loot } from './programs/loot'
 import { Lottery } from './programs/lottery'
@@ -31,15 +37,19 @@ const Xeta = {
      */
     address: Address,
     allowance: Allowance,
-    audit: Audit,
     balance: Balance,
     candle: Candle,
     claim: Claim,
-    credentials: Credentials,
+    credential: Credential,
+    instruction: Instruction,
+    lookup: Lookup,
     pool: Pool,
+    resource: Resource,
+    search: Search,
     statistic: Statistic,
     token: Token,
     transaction: Transaction,
+    transfer: Transfer,
 
     /**
      * Programs

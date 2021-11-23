@@ -1,8 +1,6 @@
-import { Transaction } from '../modules/transaction'
-import { Pool } from '../modules/pool'
-import { Config } from '../library/config'
-import { Models } from '../library/models'
+import { Instruction } from './instruction'
 import { Utils } from '../library/utils'
+import { Pool } from '../modules/pool'
 
 export class Swap {
     public pool
@@ -18,48 +16,39 @@ export class Swap {
      * Transfer to swap pool
      */
     transfer({token, amount}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            token: token,
-            amount: amount,
+        return Instruction.wrap({
             function: 'swap.transfer',
-        }})
+            pool: this.pool.address,
+            token: token,
+            amount: Utils.amount(amount),
+        }, tx)
     }
 
     /**
      * Deposit to swap pool
      */
-    deposit({token, amount, expires=null, unlocks=null}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            token: token,
-            amount: amount,
+    deposit({tokenAmount, xetaAmount, unlocks=null, expires=null}, tx={}) {
+        return Instruction.wrap({
             function: 'swap.deposit',
-            message: expires || unlocks ? JSON.stringify(Utils.strip({expires: expires, unlocks: unlocks})) : null,
-        }})
-    }
-
-    /**
-     * Supply to swap pool
-     */
-    supply(tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            function: 'swap.supply',
-        }})
+            pool: this.pool.address,
+            tokenAmount: Utils.amount(tokenAmount),
+            xetaAmount: Utils.amount(xetaAmount),
+            unlocks: unlocks,
+            expires: expires,
+        }, tx)
     }
 
     /**
      * Withdraw from swap pool
      */
     withdraw({claim, percentage=1}) {
-        if (percentage > 1) throw Error('input: percentage must between zero and one')
+        if (percentage > 1) throw Error('percentage:invalid')
 
-        return Transaction.create({
-            to: this.pool.address,
-            token: claim,
+        return Instruction.wrap({
             function: 'swap.withdraw',
-            message: JSON.stringify({percentage: percentage})
-        })
+            pool: this.pool.address,
+            claim: claim,
+            percentage: percentage,
+        }, tx)
     }
 }

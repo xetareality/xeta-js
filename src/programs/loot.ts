@@ -1,7 +1,6 @@
-import { Transaction } from '../modules/transaction'
+import { Instruction } from './instruction'
+import { Utils } from '../library/utils'
 import { Pool } from '../modules/pool'
-import { Config } from '../library/config'
-import { Models } from '../library/models'
 
 export class Loot {
     public pool
@@ -26,44 +25,44 @@ export class Loot {
      * Transfer to loot pool
      */
     transfer({amount}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            token: this.pool.token,
-            amount: amount,
+        return Instruction.wrap({
             function: 'loot.transfer',
-        }})
+            pool: this.pool.address,
+            amount: Utils.amount(amount),
+        }, tx)
     }
 
     /**
      * Deposit to loot pool
      */
-    deposit({token}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            token: token,
-            amount: 1,
+    deposit({token, unlocks=null, expires=null}, tx={}) {
+        return Instruction.wrap({
             function: 'loot.deposit',
-        }})
+            pool: this.pool.address,
+            token: token,
+            unlocks: unlocks,
+            expires: expires,
+        }, tx)
     }
 
     /**
      * Withdraw from loot pool
      */
     withdraw({claim}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            token: claim,
+        return Instruction.wrap({
             function: 'loot.withdraw',
-        }})
+            pool: this.pool.address,
+            claim: claim,
+        }, tx)
     }
 
     /**
      * Clear loot pool
      */
     clear(tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
+        return Instruction.wrap({
             function: 'loot.clear',
-        }})
+            pool: this.pool.address,
+        }, tx)
     }
 }

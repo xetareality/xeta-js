@@ -1,8 +1,6 @@
-import { Transaction } from '../modules/transaction'
-import { Pool } from '../modules/pool'
-import { Config } from '../library/config'
-import { Models } from '../library/models'
+import { Instruction } from './instruction'
 import { Utils } from '../library/utils'
+import { Pool } from '../modules/pool'
 
 export class Lock {
     public pool
@@ -26,24 +24,25 @@ export class Lock {
     /**
      * Transfer to lock pool
      */
-    transfer({amount, expires=null, unlocks=null, address=null}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            token: this.pool.token,
-            amount: amount,
+    transfer({amount, unlocks=null, expires=null, address=null}, tx={}) {
+        return Instruction.wrap({
             function: 'lock.transfer',
-            message: expires || unlocks || address ? JSON.stringify(Utils.strip({expires: expires, unlocks: unlocks, address: address})) : null,
-        }})
+            pool: this.pool.address,
+            amount: Utils.amount(amount),
+            unlocks: unlocks,
+            expires: expires,
+            address: address,
+        }, tx)
     }
 
     /**
      * Claim from lock pool
      */
     claim({claim}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            token: claim,
+        return Instruction.wrap({
             function: 'lock.claim',
-        }})
+            pool: this.pool.address,
+            claim: claim,
+        }, tx)
     }
 }

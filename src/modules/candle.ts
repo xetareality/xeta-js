@@ -1,45 +1,62 @@
-import { $fetch } from 'ohmyfetch'
-import { Models } from '../library/models'
-import { Config } from '../library/config'
+import { Resource } from './resource'
+import { Instruction } from './instruction'
 import { Utils } from '../library/utils'
-import { Transaction } from './transaction'
 
 export const Candle = {
     /**
-     * Scan candles by token and interval
+     * Read candle by key (interval:token) and time
      */
-    scan: async ({token, interval, time=null, sort='DESC', limit=25}) => {
-        return (await $fetch(Config.interface+'/candles', {
-            method: 'GET',
-            params: Utils.strip({token: token, interval: interval, time: time, sort: sort, limit: limit}),
-        }).catch(e => {
-            throw Error(e.data)
-        })).map(d => Models.parseValues(d, Models.CANDLE))
-    },
-    /**
-     * Scan candles by interval and time sorted by turnover
-     */
-    scanByTurnover: async ({interval='1d', time=null, key=null, sort='DESC', limit=25}) => {
+    read: async ({interval, token, time}, args={}) => {
         if (!time) time = Math.round((Date.now()/1000) - (Date.now()/1000) % (60*60*24))
 
-        return (await $fetch(Config.interface+'/candles', {
-            method: 'GET',
-            params: Utils.strip({interval: interval, time: time, key: key, turnover: 1, sort: sort, limit: limit}),
-        }).catch(e => {
-            throw Error(e.data)
-        })).map(d => Models.parseValues(d, Models.CANDLE))
+        return Resource.read({...{
+            type: 'candle',
+            key: interval+':'+token,
+            sort: 'time',
+            sortValue: time,
+        }, ...args})
     },
     /**
-     * Scan candles by interval and time sorted by change
+     * Scan candles by token and interval, sort by time
      */
-    scanByChange: async ({interval='1d', time=null, key=null, sort='DESC', limit=25}) => {
+    scanIntervalTokenTime: async ({interval, token, time=null, key=null}, args={}) => {
+        return Resource.scan({...{
+            type: 'candle',
+            index: null,
+            indexValue: null,
+            sort: 'time',
+            sortValue: time,
+            keyValue: interval+':'+token,
+        }, ...args})
+    },
+    /**
+     * Scan candles by interval and time, sort by turnover
+     */
+    scanIntervalTimeTurnover: async ({interval, time, turnover=null, key=null}, args={}) => {
         if (!time) time = Math.round((Date.now()/1000) - (Date.now()/1000) % (60*60*24))
 
-        return (await $fetch(Config.interface+'/candles', {
-            method: 'GET',
-            params: Utils.strip({interval: interval, time: time, key: key, change: 1, sort: sort, limit: limit}),
-        }).catch(e => {
-            throw Error(e.data)
-        })).map(d => Models.parseValues(d, Models.CANDLE))
+        return Resource.scan({...{
+            type: 'candle',
+            index: 'period',
+            indexValue: interval+':'+time,
+            sort: 'turnover',
+            sortValue: turnover,
+            keyValue: key,
+        }, ...args})
+    },
+    /**
+     * Scan candles by interval and time, sort by change
+     */
+    scanIntervalTimeChange: async ({interval, time, change=null, key=null}, args={}) => {
+        if (!time) time = Math.round((Date.now()/1000) - (Date.now()/1000) % (60*60*24))
+
+        return Resource.scan({...{
+            type: 'candle',
+            index: 'period',
+            indexValue: interval+':'+time,
+            sort: 'change',
+            sortValue: change,
+            keyValue: key,
+        }, ...args})
     },
 }

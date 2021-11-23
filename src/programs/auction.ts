@@ -1,7 +1,6 @@
-import { Transaction } from '../modules/transaction'
+import { Instruction } from './instruction'
+import { Utils } from '../library/utils'
 import { Pool } from '../modules/pool'
-import { Config } from '../library/config'
-import { Models } from '../library/models'
 
 export class Auction {
     public pool
@@ -26,52 +25,52 @@ export class Auction {
      * Transfer to auction pool
      */
     transfer({amount}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            amount: amount,
+        return Instruction.wrap({
             function: 'auction.transfer',
-        }})
+            pool: this.pool.address,
+            amount: Utils.amount(amount),
+        }, tx)
     }
 
     /**
      * Deposit to auction pool
      */
-    deposit({amount}, tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
-            token: this.pool.token,
-            amount: amount,
+    deposit({unlocks=null, expires=null}, tx={}) {
+        return Instruction.wrap({
             function: 'auction.deposit',
-        }})
+            pool: this.pool.address,
+            unlocks: unlocks,
+            expires: expires,
+        }, tx)
     }
 
     /**
      * Resolve auction pool
      */
     resolve(tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
+        return Instruction.wrap({
             function: 'auction.resolve',
-        }})
+            pool: this.pool.address,
+        }, tx)
     }
 
     /**
      * Cancel auction pool
      */
     cancel(tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
+        return Instruction.wrap({
             function: 'auction.cancel',
-        }})
+            pool: this.pool.address,
+        }, tx)
     }
 
     /**
      * Close auction pool
      */
     close(tx={}) {
-        return Transaction.create({...tx, ...{
-            to: this.pool.address,
+        return Instruction.wrap({
             function: 'auction.close',
-        }})
+            pool: this.pool.address,
+        }, tx)
     }
 }
