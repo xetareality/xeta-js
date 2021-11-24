@@ -1,15 +1,18 @@
-import { $fetch } from 'ohmyfetch'
 import { Config, Constants } from '../library/config'
 import { Utils } from '../library/utils'
 import { Models } from '../library/models'
 import { Wallet } from '../library/wallet'
 import { Hashed } from '../library/hashed'
+import { Resource } from './resource'
+import { $fetch } from 'ohmyfetch'
 
 export const Transaction = {
     /**
      * Create transaction
      */
     submit: async (instructions, tx: any = {}) => {
+        instructions = await Promise.all(instructions)
+
         tx = Utils.strip({...{
             instructions: instructions,
             sender: Config.publicKey,
@@ -35,7 +38,7 @@ export const Transaction = {
     /**
      * Poll a transactionPoll a transaction
      */
-    poll: async () => {
+    poll: async ({hash, interval=0.5, timeout=5}) => {
         var start = Date.now()
         while (Date.now() < start+timeout) {
             var result = await Transaction.read({hash: hash})

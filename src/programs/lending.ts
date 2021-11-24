@@ -1,18 +1,8 @@
-import { Instruction } from './instruction'
+import { Instruction } from '../modules/instruction'
 import { Utils } from '../library/utils'
-import { Pool } from '../modules/pool'
 
 export class Lending {
     public pool
-
-    /**
-     * Create lending pool
-     */
-    static create(pool) {
-        Models.requiredFields(pool, ['token', 'expires'])
-        Models.validFormats(pool, Models.POOL)
-        return Pool.create({...pool, ...{program: 'lending'}})
-    }
 
     /**
      * Init lending pool
@@ -26,9 +16,10 @@ export class Lending {
      */
     transfer({amount, collateralization=2.5}, tx={}) {
         return Instruction.wrap({
-            function: 'royalty.transfer',
+            function: 'lending.transfer',
             pool: this.pool.address,
-            amount: amount,
+            token: this.pool.token,
+            amount: Utils.amount(amount),
             collateralization: collateralization,
         }, tx)
     }
@@ -36,12 +27,11 @@ export class Lending {
     /**
      * Settle claim from lending pool
      */
-    settle({claim, amount}, tx={}) {
+    settle({claim}, tx={}) {
         return Instruction.wrap({
-            function: 'royalty.settle',
+            function: 'lending.settle',
             pool: this.pool.address,
             claim: claim,
-            amount: Utils.amount(amount),
         }, tx)
     }
 
@@ -50,8 +40,9 @@ export class Lending {
      */
     liquidate({claim}, tx={}) {
         return Instruction.wrap({
-            function: 'royalty.liquidate',
+            function: 'lending.liquidate',
             pool: this.pool.address,
+            token: this.pool.token,
             claim: claim,
         }, tx)
     }
@@ -59,9 +50,9 @@ export class Lending {
     /**
      * Deposit to lending pool
      */
-    deposit({amount, unlocks=None, expires=None}, tx={}) {
+    deposit({amount, unlocks=null, expires=null}, tx={}) {
         return Instruction.wrap({
-            function: 'royalty.deposit',
+            function: 'lending.deposit',
             pool: this.pool.address,
             amount: Utils.amount(amount),
             unlocks: unlocks,
@@ -74,8 +65,9 @@ export class Lending {
      */
     withdraw({claim}, tx={}) {
         return Instruction.wrap({
-            function: 'royalty.withdraw',
+            function: 'lending.withdraw',
             pool: this.pool.address,
+            token: this.pool.token,
             claim: claim,
         }, tx)
     }

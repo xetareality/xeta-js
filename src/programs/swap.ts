@@ -1,6 +1,5 @@
-import { Instruction } from './instruction'
+import { Instruction } from '../modules/instruction'
 import { Utils } from '../library/utils'
-import { Pool } from '../modules/pool'
 
 export class Swap {
     public pool
@@ -41,7 +40,7 @@ export class Swap {
     /**
      * Withdraw from swap pool
      */
-    withdraw({claim, percentage=1}) {
+    withdraw({claim, percentage=1}, tx={}) {
         if (percentage > 1) throw Error('percentage:invalid')
 
         return Instruction.wrap({

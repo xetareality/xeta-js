@@ -33,7 +33,7 @@ export const Models = {
     /**
      * Validate formats
      */
-    formats: (object, model) => {
+    validFormats: (object, model) => {
         Object.entries(object).forEach(e => {
             var t = model[e[0]][0]
             var f = e[0]
@@ -118,9 +118,10 @@ export const Models = {
         supply: ['amount'],
         reserve: ['amount'],
 
+        owner: ['hash'],
         object: ['string'],
         mime: ['string'],
-        owner: ['hash'],
+        content: ['hash'],
         frozen: ['boolean'],
         category: ['string'],
         ownerCategory: ['index'],
@@ -194,12 +195,12 @@ export const Models = {
         closed: ['boolean'],
         leader: ['hash'],
     },
-    CREDENTIAL: {
+    WALLET: {
         hash: ['hash'],
-        seed: ['string'],
-        password: ['hash'],
-        public: ['hash'],
-        private: ['hash'],
+        account: ['string'],
+        secret: ['hash'],
+        publicKey: ['hash'],
+        privateKey: ['hash'],
         created: ['timestamp'],
     },
     CANDLE: {

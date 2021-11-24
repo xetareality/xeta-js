@@ -24,7 +24,7 @@ export const Lookup = {
     /**
      * Scan tokens by hash, sort by created
      */
-    scanHashCreated: async ({hash, created=None, token=None}, args={}) => {
+    scanHashCreated: async ({hash, created=null, token=null}, args={}) => {
         return Resource.scan({...{
             type: 'lookup',
             index: 'hash',
@@ -37,7 +37,7 @@ export const Lookup = {
     /**
      * Scan tokens by fingerprint, sort by created
      */
-    scanFingerprintCreated: async ({fingerprint, created=None, token=None}, args={}) => {
+    scanFingerprintCreated: async ({fingerprint, created=null, token=null}, args={}) => {
         return Resource.scan({...{
             type: 'lookup',
             index: 'fingerprint',
@@ -50,7 +50,7 @@ export const Lookup = {
     /**
      * Scan tokens by cluster, sort by created
      */
-    scanClusterCreated: async ({cluster, created=None, token=None}, args={}) => {
+    scanClusterCreated: async ({cluster, created=null, token=null}, args={}) => {
         return Resource.scan({...{
             type: 'lookup',
             index: 'cluster',

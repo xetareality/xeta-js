@@ -1,18 +1,8 @@
-import { Instruction } from './instruction'
+import { Instruction } from '../modules/instruction'
 import { Utils } from '../library/utils'
-import { Pool } from '../modules/pool'
 
 export class Lottery {
     public pool
-
-    /**
-     * Create lottery pool
-     */
-    static create(pool) {
-        Models.requiredFields(pool, ['token', 'expires'])
-        Models.validFormats(pool, Models.POOL)
-        return Pool.create({...pool, ...{program: 'lottery'}})
-    }
 
     /**
      * Init lottery pool
@@ -28,6 +18,7 @@ export class Lottery {
         return Instruction.wrap({
             function: 'lottery.transfer',
             pool: this.pool.address,
+            token: this.pool.token,
             amount: Utils.amount(amount),
         }, tx)
     }
@@ -56,7 +47,7 @@ export class Lottery {
     /**
      * Deposit to lottery pool
      */
-    deposit({amount=null, unlocks=null, expires=null}, tx={}) {
+    deposit({amount=null, unlocks=null, expires=null}={}, tx={}) {
         return Instruction.wrap({
             function: 'lottery.deposit',
             pool: this.pool.address,

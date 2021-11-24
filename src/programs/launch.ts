@@ -1,18 +1,8 @@
-import { Instruction } from './instruction'
+import { Instruction } from '../modules/instruction'
 import { Utils } from '../library/utils'
-import { Pool } from '../modules/pool'
 
 export class Launch {
     public pool
-
-    /**
-     * Create launch pool
-     */
-    static create(pool) {
-        Models.requiredFields(pool, ['token', 'expires'])
-        Models.validFormats(pool, Models.POOL)
-        return Pool.create({...pool, ...{program: 'launch'}})
-    }
 
     /**
      * Init launch pool
@@ -50,6 +40,7 @@ export class Launch {
         return Instruction.wrap({
             function: 'launch.resolve',
             pool: this.pool.address,
+            token: this.pool.token,
         }, tx)
     }
 

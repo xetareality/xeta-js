@@ -1,18 +1,8 @@
-import { Instruction } from './instruction'
+import { Instruction } from '../modules/instruction'
 import { Utils } from '../library/utils'
-import { Pool } from '../modules/pool'
 
 export class Auction {
     public pool
-
-    /**
-     * Create auction pool
-     */
-    static create(pool) {
-        Models.requiredFields(pool, ['token', 'expires'])
-        Models.validFormats(pool, Models.POOL)
-        return Pool.create({...pool, ...{program: 'auction'}})
-    }
 
     /**
      * Init auction pool
@@ -35,7 +25,7 @@ export class Auction {
     /**
      * Deposit to auction pool
      */
-    deposit({unlocks=null, expires=null}, tx={}) {
+    deposit({unlocks=null, expires=null}={}, tx={}) {
         return Instruction.wrap({
             function: 'auction.deposit',
             pool: this.pool.address,

@@ -55,7 +55,7 @@ export const Pool = {
         return new {
             auction: Auction,
             launch: Launch,
-            lending: Lending
+            lending: Lending,
             lock: Lock,
             loot: Loot,
             lottery: Lottery,
@@ -64,7 +64,7 @@ export const Pool = {
             swap: Swap,
             vote: Vote,
         }[pool.program](pool)
-    }
+    },
     /**
      * Read pool by address
      */

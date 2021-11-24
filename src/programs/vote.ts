@@ -1,18 +1,8 @@
-import { Instruction } from './instruction'
+import { Instruction } from '../modules/instruction'
 import { Utils } from '../library/utils'
-import { Pool } from '../modules/pool'
 
 export class Vote {
     public pool
-
-    /**
-     * Create vote pool
-     */
-    static create(pool) {
-        Models.requiredFields(pool, ['token'])
-        Models.validFormats(pool, Models.POOL)
-        return Pool.create({...pool, ...{program: 'vote'}})
-    }
 
     /**
      * Init vote pool
@@ -24,7 +14,7 @@ export class Vote {
     /**
      * Transfer to vote pool
      */
-    transfer({amount=0, answer=null, number=null}, tx={}) {
+    transfer({amount=0, answer=null, number=null}={}, tx={}) {
         if ((this.pool.candidates && !answer) || (this.pool.candidates && number)) throw Error('answer:invalid')
 
         return Instruction.wrap({

@@ -1,14 +1,14 @@
-import { Instruction } from './instruction'
 import { Resource } from './resource'
 import { Instruction } from './instruction'
 import { Utils } from '../library/utils'
 import { Models } from '../library/models'
+import { Hashed } from '../library/hashed'
 
 export const Token = {
     /**
      * Create token
      */
-    create: async ({name, symbol=null, supply=null, reserve=null, description=null, links=null, meta=null, icon=null, owner=null, frozen=null, category=null, object=null, mime=null}, tx={}) => {
+    create: async ({name, symbol=null, supply=null, reserve=null, description=null, links=null, meta=null, icon=null, owner=null, frozen=null, category=null, object=null, mime=null, content=null}, tx={}) => {
         var token = Utils.strip({
             function: 'token.create',
             name: name,
@@ -24,6 +24,7 @@ export const Token = {
             category: category,
             object: object,
             mime: mime,
+            content: content,
         })
 
         if (supply) {
@@ -31,7 +32,7 @@ export const Token = {
             Models.exclusiveFields(token, ['function', 'name', 'description', 'links', 'meta', 'icon', 'symbol', 'supply', 'reserve'])
         } else {
             Models.requiredFields(token, ['name'])
-            Models.exclusiveFields(token, ['function', 'name', 'description', 'links', 'meta', 'icon', 'owner', 'frozen', 'category', 'object', 'mime'])
+            Models.exclusiveFields(token, ['function', 'name', 'description', 'links', 'meta', 'icon', 'owner', 'frozen', 'category', 'object', 'mime', 'content'])
         }
 
         return Instruction.wrap(token, tx)
@@ -39,7 +40,7 @@ export const Token = {
     /**
      * Update specified values of an token
      */
-    update: async ({token, name=null, description=null, links=null, meta=null, icon=null, frozen=null, category=null, object=null, mime=null}, tx={}) => {
+    update: async ({token, name=null, description=null, links=null, meta=null, icon=null, frozen=null, category=null, mime=null}, tx={}) => {
         return Instruction.wrap({
             function: 'token.update',
             token: token,
@@ -50,7 +51,6 @@ export const Token = {
             icon: icon,
             frozen: frozen,
             category: category,
-            object: object,
             mime: mime,
         }, tx)
     },
@@ -139,6 +139,19 @@ export const Token = {
             type: 'token',
             index: 'owner',
             indexValue: owner,
+            sort: 'created',
+            sortValue: created,
+            keyValue: address,
+        }, ...args})
+    },
+    /**
+     * Scan tokens by content, sort by created
+     */
+    scanContentCreated: async ({content, created=null, address=null}, args={}) => {
+        return Resource.scan({...{
+            type: 'token',
+            index: 'content',
+            indexValue: content,
             sort: 'created',
             sortValue: created,
             keyValue: address,

@@ -8,8 +8,10 @@ export const Statistic = {
      */
     read: async ({key, time}, args={}) => {
         return Resource.read({...{
-            type: 'allowance',
-            key: hash,
+            type: 'statistic',
+            key: key,
+            sort: 'time',
+            sortValue: time,
         }, ...args})
     },
     /**

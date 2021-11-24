@@ -1,18 +1,8 @@
-import { Instruction } from './instruction'
+import { Instruction } from '../modules/instruction'
 import { Utils } from '../library/utils'
-import { Pool } from '../modules/pool'
 
 export class Staking {
     public pool
-
-    /**
-     * Create staking pool
-     */
-    static create(pool) {
-        Models.requiredFields(pool, ['token'])
-        Models.validFormats(pool, Models.POOL)
-        return Pool.create({...pool, ...{program: 'staking'}})
-    }
 
     /**
      * Init staking pool

@@ -1,11 +1,10 @@
-import { Instruction } from './instruction'
 import { Resource } from './resource'
 import { Instruction } from './instruction'
 import { Utils } from '../library/utils'
 import { Config } from '../library/config'
 import { $fetch } from 'ohmyfetch'
 
-export const Address = {
+export const Account = {
     /**
      * Update (or create) account
      */
@@ -23,7 +22,7 @@ export const Address = {
      * Read account data for an address (pool, token, balance)
      */
     read: async ({address}) => {
-        var result = await $fetch(Config.interface+'/address', {
+        var result = await $fetch(Config.interface+'/account', {
             method: 'GET',
             params: {address: address},
         }).catch(e => {

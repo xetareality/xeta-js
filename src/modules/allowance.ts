@@ -1,4 +1,3 @@
-import { Instruction } from './instruction'
 import { Resource } from './resource'
 import { Instruction } from './instruction'
 import { Utils } from '../library/utils'
@@ -46,7 +45,7 @@ export const Allowance = {
     /**
      * Scan allowances by address, sort by created
      */
-    scanByAddress: async ({address, created=null, hash=null}, args={}) => {
+    scanAddressCreated: async ({address, created=null, hash=null}, args={}) => {
         return Resource.scan({...{
             type: 'allowance',
             index: 'address',
@@ -59,7 +58,7 @@ export const Allowance = {
     /**
      * Scan allowances by spender, sort by created
      */
-    scanBySpender: async ({spender, created=null, hash=null}, args={}) => {
+    scanSpenderCreated: async ({spender, created=null, hash=null}, args={}) => {
         return Resource.scan({...{
             type: 'allowance',
             index: 'spender',

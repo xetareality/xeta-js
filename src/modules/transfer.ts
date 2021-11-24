@@ -1,7 +1,7 @@
-import { Instruction } from './instruction'
 import { Resource } from './resource'
 import { Instruction } from './instruction'
 import { Utils } from '../library/utils'
+import { Hashed } from '../library/hashed'
 
 export const Transfer = {
     /**

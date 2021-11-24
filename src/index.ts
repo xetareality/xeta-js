@@ -1,4 +1,4 @@
-import { Address } from './modules/address'
+import { Account } from './modules/account'
 import { Allowance } from './modules/allowance'
 import { Balance } from './modules/balance'
 import { Candle } from './modules/candle'
@@ -25,22 +25,21 @@ import { Staking } from './programs/staking'
 import { Swap } from './programs/swap'
 import { Vote } from './programs/vote'
 
+import { Config } from './library/config'
+import { Crypto } from './library/crypto'
 import { Hashed } from './library/hashed'
 import { Models } from './library/models'
 import { Utils } from './library/utils'
-import { Wallet } from './library/wallet'
-import { Config } from './library/config'
 
 const Xeta = {
     /**
      * Modules
      */
-    address: Address,
+    account: Account,
     allowance: Allowance,
     balance: Balance,
     candle: Candle,
     claim: Claim,
-    credential: Credential,
     instruction: Instruction,
     lookup: Lookup,
     pool: Pool,
@@ -50,6 +49,7 @@ const Xeta = {
     token: Token,
     transaction: Transaction,
     transfer: Transfer,
+    wallet: Wallet,
 
     /**
      * Programs
@@ -67,11 +67,11 @@ const Xeta = {
     /**
      * Library
      */
+    config: Config,
+    crypto: Crypto,
     hashed: Hashed,
     models: Models,
     utils: Utils,
-    wallet: Wallet,
-    config: Config,
 }
 
 export default Xeta

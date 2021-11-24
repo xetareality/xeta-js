@@ -1,18 +1,8 @@
-import { Instruction } from './instruction'
+import { Instruction } from '../modules/instruction'
 import { Utils } from '../library/utils'
-import { Pool } from '../modules/pool'
 
 export class Royalty {
     public pool
-
-    /**
-     * Create royalty pool
-     */
-    static create(pool) {
-        Models.requiredFields(pool, ['token'])
-        Models.validFormats(pool, Models.POOL)
-        return Pool.create({...pool, ...{program: 'royalty'}})
-    }
 
     /**
      * Init royalty pool
