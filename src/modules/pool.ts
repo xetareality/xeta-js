@@ -52,6 +52,7 @@ export const Pool = {
      */
     instance: async ({address}, args={}) => {
         var pool = await Pool.read({address: address})
+        if (!pool) return
         return new {
             auction: Auction,
             launch: Launch,

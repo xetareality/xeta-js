@@ -6,8 +6,7 @@ export const Config = {
     seed: null,
     password: null,
     interface: 'https://interface.xetareality.com',
-    network: 'https://mainnet.xetareality.com',
-    registry: 'https://registry.xetareality.com',
+    network: 'https://network.xetareality.com',
     xetaAddress: '11111111111111111111111111111xeta',
     factoryAddress: '11111111111111111111111111factory',
     xusdAddress: '11111111111111111111111111111xusd',
@@ -20,4 +19,12 @@ export const Config = {
 export const Constants = {
     zero: Big(0),
     one: Big(1),
+}
+
+/**
+ * Set endpoints
+ */
+function init ({networkEndpoint=null, interfaceEndpoint=null}) {
+    if (networkEndpoint) Config.network = networkEndpoint
+    if (interfaceEndpoint) Config.interface = interfaceEndpoint
 }

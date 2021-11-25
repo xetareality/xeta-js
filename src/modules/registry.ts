@@ -2,44 +2,44 @@ import { Resource } from './resource'
 import { Instruction } from './instruction'
 import { Utils } from '../library/utils'
 
-export const Lookup = {
+export const Registry = {
     /**
-     * Read lookup by token address
+     * Read object by hash
      */
-    read: async ({token}, args={}) => {
+    read: async ({hash}, args={}) => {
         return Resource.read({...{
-            type: 'lookup',
-            key: token,
+            type: 'object',
+            key: hash,
         }, ...args})
     },
     /**
-     * List lookups by token addresses
+     * List objects by hashes
      */
-    list: async ({tokens}, args={}) => {
+    list: async ({hashes}, args={}) => {
         return Resource.list({...{
-            type: 'lookup',
-            keys: tokens,
+            type: 'object',
+            keys: hashes,
         }, ...args})
     },
     /**
-     * Scan tokens by hash, sort by created
+     * Scan objects by content, sort by created
      */
-    scanHashCreated: async ({hash, created=null, token=null}, args={}) => {
+    scanHashCreated: async ({content, created=null, token=null}, args={}) => {
         return Resource.scan({...{
-            type: 'lookup',
-            index: 'hash',
-            indexValue: hash,
+            type: 'object',
+            index: 'content',
+            indexValue: content,
             sort: 'created',
             sortValue: created,
             keyValue: token,
         }, ...args})
     },
     /**
-     * Scan tokens by fingerprint, sort by created
+     * Scan objects by fingerprint, sort by created
      */
     scanFingerprintCreated: async ({fingerprint, created=null, token=null}, args={}) => {
         return Resource.scan({...{
-            type: 'lookup',
+            type: 'object',
             index: 'fingerprint',
             indexValue: fingerprint,
             sort: 'created',
@@ -48,11 +48,11 @@ export const Lookup = {
         }, ...args})
     },
     /**
-     * Scan tokens by cluster, sort by created
+     * Scan objects by cluster, sort by created
      */
     scanClusterCreated: async ({cluster, created=null, token=null}, args={}) => {
         return Resource.scan({...{
-            type: 'lookup',
+            type: 'object',
             index: 'cluster',
             indexValue: cluster,
             sort: 'created',

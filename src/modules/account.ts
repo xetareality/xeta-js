@@ -8,14 +8,15 @@ export const Account = {
     /**
      * Update (or create) account
      */
-    update: async ({name, object=null, description=null, links=null, meta=null}, tx={}) => {
+    update: async ({name, description=null, links=null, meta=null, icon=null, category=null}, tx={}) => {
         return Instruction.wrap({
             function: 'account.update',
             name: name,
-            object: object,
             description: description,
             links: links,
             meta: meta,
+            icon: icon,
+            category: category,
         }, tx)
     },
     /**

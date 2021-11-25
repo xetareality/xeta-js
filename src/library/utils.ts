@@ -32,7 +32,7 @@ export const Utils = {
      */
     strip: (object, min=1) => {
         var out = Object.fromEntries(Object.entries(object).filter(e => e[1] != null && e[1] != undefined))
-        if (Object.keys(out).length < min) throw Error('validation: missing parameters')
+        if (Object.keys(out).length < min) throw Error('parameters:missing')
         return out
     },
     /**
@@ -45,5 +45,13 @@ export const Utils = {
     amount: (amount) => {
         if (amount == null) return
         return Big(amount).round(8).toString()
-    }
+    },
+    /**
+     * Returns the resource at instruction i at index j
+     */
+    output: (transaction, instruction=0, index=0) => {
+        if (transaction.outputs.length <= instruction) throw Error('instruction:length')
+        if (transaction.outputs[instruction].length <= index) throw Error('index:length')
+        return transaction.outputs[instruction][index].split(':')[1]
+    },
 }

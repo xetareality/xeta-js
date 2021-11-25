@@ -34,12 +34,12 @@ export const Allowance = {
         }, ...args})
     },
     /**
-     * Read allowance by address, token and spender
+     * Read allowance by address, spender, and token
      */
-    readAddressTokenSpender: async ({address, token, spender}, args={}) => {
+    readAddressSpenderToken: async ({address, spender, token}, args={}) => {
         return Resource.read({...{
             type: 'allowance',
-            key: await Hashed.allowance({address: address, token: token, spender: spender}),
+            key: await Hashed.allowance({address: address, spender: spender, token: token}),
         }, ...args})
     },
     /**

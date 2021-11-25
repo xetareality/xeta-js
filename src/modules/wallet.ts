@@ -9,44 +9,42 @@ import { $fetch } from 'ohmyfetch'
 export const Wallet = {
     /**
      * Set public and private key
-     * Optionally set network and interface endpoints
      */
-    connect: ({publicKey, privateKey=null, networkEndpoint=null, interfaceEndpoint=null, seed=null, password=null}) => {
+    init: ({publicKey, privateKey=null}) => {
         Config.publicKey = publicKey
         Config.privateKey = privateKey
-        if (networkEndpoint) Config.network = networkEndpoint
-        if (interfaceEndpoint) Config.interface = interfaceEndpoint
-        if (seed) Config.seed = seed
-        if (password) Config.password = password
     },
     /**
-     * Read or create wallet
+     * Connect to managed wallet
      */
-    init: async({seed, password, unsafe=null, create=null}) => {
-        return $fetch(Config.interface+'/wallet', {
+    managed: async ({account, secret, unsafe=null, create=null}) => {
+        var wallet = await $fetch(Config.interface+'/wallet', {
             method: 'POST',
             body: Utils.strip({
-                seed: seed,
-                password: await Hashed.string(password),
+                account: account,
+                secret: secret,
                 unsafe: unsafe,
                 create: create,
             }),
         }).catch(e => {
             throw Error(e.data)
         })
+
+        Wallet.init({publicKey: wallet.publicKey, privateKey: wallet.privateKey})
+        return wallet
     },
     /**
      * Sign transaction with managed wallet
      * Returns transaction with signature
      */
-    sign: async ({seed, password, tx}) => {
+    sign: async ({account, secret, tx}) => {
         Models.validFormats(tx, Models.TRANSACTION)
 
         return $fetch(Config.interface+'/sign', {
             method: 'POST',
             body: {
-                seed: seed,
-                password: await Hashed.string(password),
+                account: account,
+                secret: await Hashed.string(secret),
                 transaction: JSON.stringify(tx),
             },
         }).catch(e => {

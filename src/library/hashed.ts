@@ -10,8 +10,8 @@ export const Hashed = {
     allowance: async (body): Promise<string> => {
         return Hashed.values([
             body.address,
-            body.token,
-            body.spender])
+            body.spender,
+            body.token])
     },
     balance: async (body): Promise<string> => {
         return Hashed.values([

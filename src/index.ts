@@ -3,9 +3,8 @@ import { Allowance } from './modules/allowance'
 import { Balance } from './modules/balance'
 import { Candle } from './modules/candle'
 import { Claim } from './modules/claim'
-import { Credential } from './modules/credential'
 import { Instruction } from './modules/instruction'
-import { Lookup } from './modules/lookup'
+import { Object } from './modules/object'
 import { Pool } from './modules/pool'
 import { Resource } from './modules/resource'
 import { Search } from './modules/search'
@@ -13,6 +12,7 @@ import { Statistic } from './modules/statistic'
 import { Token } from './modules/token'
 import { Transaction } from './modules/transaction'
 import { Transfer } from './modules/transfer'
+import { Wallet } from './modules/wallet'
 
 import { Auction } from './programs/auction'
 import { Launch } from './programs/launch'
@@ -41,8 +41,8 @@ const Xeta = {
     candle: Candle,
     claim: Claim,
     instruction: Instruction,
-    lookup: Lookup,
     pool: Pool,
+    registry: Registry,
     resource: Resource,
     search: Search,
     statistic: Statistic,
