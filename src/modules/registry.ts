@@ -24,7 +24,7 @@ export const Registry = {
     /**
      * Scan objects by content, sort by created
      */
-    scanHashCreated: async ({content, created=null, token=null}, args={}) => {
+    scanContentCreated: async ({content, created=null, token=null}, args={}) => {
         return Resource.scan({...{
             type: 'object',
             index: 'content',

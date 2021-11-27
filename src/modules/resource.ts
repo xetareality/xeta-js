@@ -9,7 +9,7 @@ export const Resource = {
     read: async ({type, key, sort=null, sortValue=null, fields=null, preview=null}) => {
         if (!['allowance', 'balance', 'candle', 'claim', 'object', 'pool', 'statistic', 'token', 'transaction', 'transfer', 'wallet'].includes(type)) throw Error('type:invalid')
 
-        return $fetch(Config.interface+'/read', {
+        return $fetch(Config.interface+'/read'+(Config.dev ? '?dev=1' : ''), {
             method: 'GET',
             params: Utils.strip({
                 type: type,
@@ -28,7 +28,7 @@ export const Resource = {
     list: async ({type, keys, sort=null, sortValues=null, fields=null, preview=null}) => {
         if (!['allowance', 'balance', 'candle', 'claim', 'object', 'pool', 'statistic', 'token', 'transaction', 'transfer', 'wallet'].includes(type)) throw Error('type:invalid')
 
-        return $fetch(Config.interface+'/list', {
+        return $fetch(Config.interface+'/list'+(Config.dev ? '?dev=1' : ''), {
             method: 'GET',
             params: Utils.strip({
                 type: type,
@@ -51,7 +51,7 @@ export const Resource = {
         if (['candle', 'statistic'].includes(type)) limit = limit ? Math.min(limit, 1000) : 200
         else limit = limit ? Math.min(limit, 25) : 25
 
-        return $fetch(Config.interface+'/scan', {
+        return $fetch(Config.interface+'/scan'+(Config.dev ? '?dev=1' : ''), {
             method: 'GET',
             params: Utils.strip({
                 type: type,

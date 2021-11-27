@@ -12,8 +12,8 @@ export const Crypto = {
             await ed.getPublicKey(Utils.base58decode(privateKey)))
     },
     generateKeypair: async (): Promise<string[]> => {
-        var privateKey = Wallet.generatePrivate()
-        return [await Wallet.generatePublic(privateKey), privateKey]
+        var privateKey = Crypto.generatePrivate()
+        return [await Crypto.generatePublic(privateKey), privateKey]
     },
     sign: async (message: string, privateKey: string): Promise<string> => {
         return Utils.base58encode(await ed.sign(

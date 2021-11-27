@@ -1,4 +1,4 @@
-import { Config, Constants } from '../library/config'
+import { Config } from '../library/config'
 import { Utils } from '../library/utils'
 import { Models } from '../library/models'
 import { Crypto } from '../library/crypto'
@@ -25,7 +25,7 @@ export const Transaction = {
         if (!tx.signature && !Config.privateKey) return tx
         if (!tx.signature) tx.signature = await Crypto.sign(await Hashed.transaction(tx), Config.privateKey)
 
-        var result = await $fetch(Config.network+'/transaction', {
+        var result = await $fetch(Config.network+(Config.dev ? '?dev=1' : ''), {
             method: 'POST',
             body: tx})
         .catch(e => {

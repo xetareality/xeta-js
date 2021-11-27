@@ -56,6 +56,7 @@ const Xeta = {
      */
     auction: Auction,
     launch: Launch,
+    lending: Lending,
     lock: Lock,
     loot: Loot,
     lottery: Lottery,
