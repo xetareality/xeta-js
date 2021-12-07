@@ -54,4 +54,21 @@ export const Utils = {
         if (transaction.outputs[instruction].length <= index) throw Error('index:length')
         return transaction.outputs[instruction][index].split(':')[1]
     },
+    /**
+     * Returns key name based on resource
+     */
+    key: (resource) => ({
+        token: 'address',
+        pool: 'address',
+        address: 'address',
+        allowance: 'hash',
+        balance: 'hash',
+        claim: 'hash',
+        wallet: 'hash',
+        transaction: 'hash',
+        transfer: 'hash',
+        object: 'hash',
+        candle: 'key',
+        statistic: 'key',
+    }[resource]),
 }

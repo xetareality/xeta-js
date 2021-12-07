@@ -112,7 +112,7 @@ export const Models = {
         description: ['string'],
         links: ['strings'],
         meta: ['object'],
-        icon: ['string'],
+        preview: ['string'],
 
         symbol: ['string'],
         supply: ['amount'],
@@ -164,13 +164,14 @@ export const Models = {
         created: ['timestamp'],
         origin: ['hash'],
         tokenProgram: ['index'],
+        activeProgram: ['string'],
         
         name: ['string'],
+        description: ['string'],
         mechanism: ['string'],
         candidates: ['strings'],
         rate: ['number'],
         percentage: ['number'],
-        probability: ['number'],
         answers: ['strings'],
         meta: ['object'],
 
@@ -194,6 +195,7 @@ export const Models = {
         claimsCount: ['integer'],
         closed: ['boolean'],
         leader: ['hash'],
+        number: ['number'],
     },
     WALLET: {
         hash: ['hash'],

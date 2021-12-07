@@ -22,8 +22,8 @@ export const Hashed = {
         var enc = await Utils.sha256(JSON.stringify(values))
         return Utils.base58encode(enc)
     },
-    string: async (body): Promise<string> => {
-        var enc = await Utils.sha256(body, true)
+    string: async (body, double=true): Promise<string> => {
+        var enc = await Utils.sha256(body, double)
         return Utils.base58encode(enc)
     },
 }

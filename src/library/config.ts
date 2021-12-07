@@ -3,8 +3,8 @@ import Big from 'big.js'
 export const Config = {
     publicKey: null,
     privateKey: null,
-    seed: null,
-    password: null,
+    account: null,
+    secret: null,
     dev: null,
     interface: 'https://interface.xetareality.com',
     network: 'https://network.xetareality.com',
@@ -22,6 +22,6 @@ export const Config = {
     init: ({networkEndpoint=null, interfaceEndpoint=null, dev=null}) => {
         if (networkEndpoint) Config.network = networkEndpoint
         if (interfaceEndpoint) Config.interface = interfaceEndpoint
-        if (dev != null) Config.dev = dev
+        if (dev != null) Config.dev = dev ? dev : null
     }
 }
