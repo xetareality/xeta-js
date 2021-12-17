@@ -1,4 +1,4 @@
-import { Account } from './modules/account'
+import { Address } from './modules/address'
 import { Allowance } from './modules/allowance'
 import { Balance } from './modules/balance'
 import { Candle } from './modules/candle'
@@ -35,7 +35,7 @@ const Xeta = {
     /**
      * Modules
      */
-    account: Account,
+    address: Address,
     allowance: Allowance,
     balance: Balance,
     candle: Candle,

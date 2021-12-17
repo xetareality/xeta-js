@@ -18,7 +18,7 @@ export const Pool = {
     /**
      * Create pool
      */
-    create: async ({token, program, name=null, mechanism=null, candidates=null, rate=null, percentage=null, probability=null, expires=null, answers=null, meta=null, minAmount=null, maxAmount=null, minTime=null, maxTime=null, transfersLimit=null, claimsLimit=null, tokenLimit=null, xetaLimit=null, tokenTarget=null, xetaTarget=null}, tx={}) => {
+    create: async ({token, program, name=null, description=null, mechanism=null, candidates=null, rate=null, percentage=null, number=null, expires=null, answers=null, meta=null, minAmount=null, maxAmount=null, minTime=null, maxTime=null, transfersLimit=null, claimsLimit=null, tokenLimit=null, xetaLimit=null, tokenTarget=null, xetaTarget=null}, tx={}) => {
         if (!['auction', 'launch', 'lending', 'lock', 'loot', 'lottery', 'royalty', 'staking', 'vote'].includes(program)) throw Error('program:invalid')
 
         return Instruction.wrap({
@@ -26,11 +26,12 @@ export const Pool = {
             token: token,
             program: program,
             name: name,
+            description: description,
             mechanism: mechanism,
             candidates: candidates,
             rate: rate,
             percentage: percentage,
-            probability: probability,
+            number: number,
             expires: expires,
             answers: answers,
             meta: meta,
@@ -120,6 +121,84 @@ export const Pool = {
             indexValue: creator,
             sort: 'created',
             sortValue: created,
+            keyValue: address,
+        }, ...args})
+    },
+    /**
+     * Scan pools by active program, sort by created
+     */
+    scanProgramCreated: async ({program, created=null, address=null}, args={}) => {
+        return Resource.scan({...{
+            type: 'pool',
+            index: 'activeProgram',
+            indexValue: program,
+            sort: 'created',
+            sortValue: created,
+            keyValue: address,
+        }, ...args})
+    },
+    /**
+     * Scan pools by active program, sort by expires
+     */
+    scanProgramExpires: async ({program, expires=null, address=null}, args={}) => {
+        return Resource.scan({...{
+            type: 'pool',
+            index: 'activeProgram',
+            indexValue: program,
+            sort: 'expires',
+            sortValue: expires,
+            keyValue: address,
+        }, ...args})
+    },
+    /**
+     * Scan pools by active program, sort by number
+     */
+    scanProgramNumber: async ({program, number=null, address=null}, args={}) => {
+        return Resource.scan({...{
+            type: 'pool',
+            index: 'activeProgram',
+            indexValue: program,
+            sort: 'number',
+            sortValue: number,
+            keyValue: address,
+        }, ...args})
+    },
+    /**
+     * Scan pools by active program, sort by xetaBalance
+     */
+    scanProgramXetaBalance: async ({program, xetaBalance=null, address=null}, args={}) => {
+        return Resource.scan({...{
+            type: 'pool',
+            index: 'activeProgram',
+            indexValue: program,
+            sort: 'xetaBalance',
+            sortValue: xetaBalance,
+            keyValue: address,
+        }, ...args})
+    },
+    /**
+     * Scan pools by active program, sort by tokenBalance
+     */
+    scanProgramTokenBalance: async ({program, tokenBalance=null, address=null}, args={}) => {
+        return Resource.scan({...{
+            type: 'pool',
+            index: 'activeProgram',
+            indexValue: program,
+            sort: 'tokenBalance',
+            sortValue: tokenBalance,
+            keyValue: address,
+        }, ...args})
+    },
+    /**
+     * Scan pools by active program, sort by transfersCount
+     */
+    scanProgramTransfersCount: async ({program, transfersCount=null, address=null}, args={}) => {
+        return Resource.scan({...{
+            type: 'pool',
+            index: 'activeProgram',
+            indexValue: program,
+            sort: 'transfersCount',
+            sortValue: transfersCount,
             keyValue: address,
         }, ...args})
     },

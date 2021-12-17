@@ -71,6 +71,12 @@ Xeta.pool.list({addresses=[pool])
 Xeta.pool.scanTokenProgramCreated({token: token, program: string})
 Xeta.pool.scanNameCreated({name: string})
 Xeta.pool.scanCreatorCreated({creator: address})
+Xeta.pool.scanProgramCreated({program: string})
+Xeta.pool.scanProgramExpires({program: string})
+Xeta.pool.scanProgramNumber({program: string})
+Xeta.pool.scanProgramXetaBalance({program: string})
+Xeta.pool.scanProgramTokenBalance({program: string})
+Xeta.pool.scanProgramTransfersCount({program: string})
 ```
 
 ## Account
@@ -226,7 +232,7 @@ Pools are based on programs, which are pre-written smart contracts on Xeta. For 
 ```
 # Creator methods:
 auction = Xeta.pool.create({program='auction', token: token, expires: timestamp, xetaTarget: amount, xetaLimit: amount})
-auction.deposit({amount: amount})
+auction.deposit()
 auction.close()
 
 # Participant methods:
@@ -286,7 +292,7 @@ loot.withdraw({claim: claim})
 loot.clear()
 
 # Participant methods:
-loot.transfer({amount: amount})
+loot.transfer()
 ```
 
 ## Lottery

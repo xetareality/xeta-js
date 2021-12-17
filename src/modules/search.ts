@@ -13,7 +13,7 @@ export const Search = {
     query: async ({query}) => {
         return $fetch(Config.interface+'/search', {
             method: 'GET',
-            params: {query: query},
+            params: {query: query, dev: Config.dev},
         }).catch(e => {
             throw Error(e.data)
         })

@@ -19,7 +19,7 @@ export const Transaction = {
             nonce: Math.round(Date.now()/1000),
         }, ...tx})
         
-        Models.exclusiveFields(tx, ['hash', 'signature', 'sender', 'instructions', 'nonce', 'sponsored'])
+        Models.exclusiveFields(tx, ['hash', 'signature', 'sender', 'instructions', 'nonce'])
         Models.validFormats(tx, Models.TRANSACTION)
 
         if (!tx.signature && !Config.privateKey) return tx

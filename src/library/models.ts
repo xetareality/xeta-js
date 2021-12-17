@@ -21,14 +21,18 @@ export const Models = {
      */
     requiredFields: (object, fields: string[]): void => {
         var keys = Object.keys(object)
-        if (!fields.every(f => keys.includes(f))) throw Error('input: missing fields')
+        fields.forEach(f => {
+            if (!keys.includes(f)) throw Error(f+':required')
+        })
     },
     /**
      * Guarantee that object contains only specified fields
      */
     exclusiveFields: (object, fields: string[]): void => {
         var keys = Object.keys(object)
-        if (!keys.every(k => fields.includes(k))) throw Error('input: invalid fields')
+        keys.forEach(k => {
+            if (!fields.includes(k)) throw Error(k+':invalid')
+        })
     },
     /**
      * Validate formats
@@ -41,20 +45,21 @@ export const Models = {
 
             if (v == undefined || v == null) return
             if (!Object.keys(model).includes(f)) throw Error(f+':invalid')
+            var hashRegex = new RegExp('^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$', 'g')
 
-            if (t == 'string' && typeof v == 'string' && v.length <= 256) return
-            else if (t == 'strings' && v instanceof Array && v.length && v.length <= 100 && v.length == Utils.unique(v).length && v.every(v => typeof v == 'string' && v.length <= 256)) return
+            if (t == 'string' && typeof v == 'string' && v.length > 0 && v.length <= 256) return
+            else if (t == 'strings' && v instanceof Array && v.length && v.length <= 100 && v.length == Utils.unique(v).length && v.every(v => typeof v == 'string' && v.length > 0 && v.length <= 256)) return
             else if (t == 'number' && typeof v == 'number' && v >= 0 && v <= 1e15 && Big(v).eq(Big(v).round(8))) return
             else if (t == 'numbers' && v instanceof Array && v.length && v.length <= 100 && v.length == Utils.unique(v).length && v.every(v => typeof v == 'number' && v >= 0 && v <= 1e15 && Big(v).eq(Big(v).round(8)))) return
-            else if (t == 'hash' && typeof v == 'string' && v.length >= 32 && v.length <= 44) return
-            else if (t == 'hashes' && v instanceof Array && v.length && v.length <= 100 && v.length == Utils.unique(v).length && v.every(v => typeof v == 'string' && v.length >= 32 && v.length <= 44)) return
+            else if (t == 'hash' && typeof v == 'string' && v.length >= 32 && v.length <= 44 && hashRegex.test(v)) return
+            else if (t == 'hashes' && v instanceof Array && v.length && v.length <= 100 && v.length == Utils.unique(v).length && v.every(v => typeof v == 'string' && v.length >= 32 && v.length <= 44 && hashRegex.test(v))) return
             else if (t == 'text' && typeof v == 'string' && v.length <= 8192) return
             else if (t == 'integer' && typeof v == 'number' && Math.round(v) == v && v >= 0 && v <= 1e15) return
             else if (t == 'timestamp' && typeof v == 'number' && Math.round(v) == v && v >= 1e12 && v < 1e13) return
             else if (t == 'amount' && typeof v == 'string' && Big(v).eq(Big(v).round(8)) && Big(v).gte(0) && Big(v).lte(1e15)) return
             else if (t == 'boolean' && typeof v == 'boolean') return
             else if (t == 'object' && v instanceof Object) return
-            else if (t == 'index' && typeof v == 'string' && v.length == 8) return
+            else if (t == 'index' && typeof v == 'string' && v.length == 8 && hashRegex.test(v)) return
             else throw Error(f+':format')
         })
     },
@@ -121,7 +126,7 @@ export const Models = {
         owner: ['hash'],
         object: ['string'],
         mime: ['string'],
-        content: ['hash'],
+        content: ['string'],
         frozen: ['boolean'],
         category: ['string'],
         ownerCategory: ['index'],

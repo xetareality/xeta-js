@@ -8,7 +8,7 @@ export const Token = {
     /**
      * Create token
      */
-    create: async ({name, symbol=null, supply=null, reserve=null, description=null, links=null, meta=null, icon=null, owner=null, frozen=null, category=null, object=null, mime=null, content=null}, tx={}) => {
+    create: async ({name, symbol=null, supply=null, reserve=null, description=null, links=null, meta=null, preview=null, owner=null, frozen=null, category=null, object=null, mime=null, content=null}, tx={}) => {
         var token = Utils.strip({
             function: 'token.create',
             name: name,
@@ -18,7 +18,7 @@ export const Token = {
             description: description,
             links: links,
             meta: meta,
-            icon: icon,
+            preview: preview,
             owner: owner,
             frozen: frozen,
             category: category,
@@ -29,10 +29,10 @@ export const Token = {
 
         if (supply) {
             Models.requiredFields(token, ['name', 'symbol', 'supply'])
-            Models.exclusiveFields(token, ['function', 'name', 'description', 'links', 'meta', 'icon', 'symbol', 'supply', 'reserve'])
+            Models.exclusiveFields(token, ['function', 'name', 'description', 'links', 'meta', 'preview', 'symbol', 'supply', 'reserve'])
         } else {
             Models.requiredFields(token, ['name'])
-            Models.exclusiveFields(token, ['function', 'name', 'description', 'links', 'meta', 'icon', 'owner', 'frozen', 'category', 'object', 'mime', 'content'])
+            Models.exclusiveFields(token, ['function', 'name', 'description', 'links', 'meta', 'preview', 'owner', 'frozen', 'category', 'object', 'mime', 'content'])
         }
 
         return Instruction.wrap(token, tx)
@@ -40,7 +40,7 @@ export const Token = {
     /**
      * Update specified values of an token
      */
-    update: async ({token, name=null, description=null, links=null, meta=null, icon=null, frozen=null, category=null, mime=null}, tx={}) => {
+    update: async ({token, name=null, description=null, links=null, meta=null, preview=null, frozen=null, category=null, mime=null}, tx={}) => {
         return Instruction.wrap({
             function: 'token.update',
             token: token,
@@ -48,7 +48,7 @@ export const Token = {
             description: description,
             links: links,
             meta: meta,
-            icon: icon,
+            preview: preview,
             frozen: frozen,
             category: category,
             mime: mime,
@@ -62,16 +62,6 @@ export const Token = {
             function: 'token.mint',
             token: token,
             amount: Utils.amount(amount),
-        }, tx)
-    },
-    /**
-     * Transfer token
-     */
-    transfer: async ({token, to}, tx={}) => {
-        return Instruction.wrap({
-            function: 'token.transfer',
-            token: token,
-            to: to,
         }, tx)
     },
     /**

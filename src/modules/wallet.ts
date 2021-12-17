@@ -18,7 +18,7 @@ export const Wallet = {
      * Connect to managed wallet
      */
     managed: async ({account, secret, unsafe=null, create=null}) => {
-        var wallet = await $fetch(Config.interface+'/wallet', {
+        var wallet = await $fetch(Config.interface+'/wallet'+(Config.dev ? '?dev=1' : ''), {
             method: 'POST',
             body: Utils.strip({
                 account: account,
@@ -40,7 +40,7 @@ export const Wallet = {
     sign: async ({account, secret, tx}) => {
         Models.validFormats(tx, Models.TRANSACTION)
 
-        return $fetch(Config.interface+'/sign', {
+        return $fetch(Config.interface+'/sign'+(Config.dev ? '?dev=1' : ''), {
             method: 'POST',
             body: {
                 account: account,

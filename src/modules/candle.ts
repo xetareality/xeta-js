@@ -7,7 +7,7 @@ export const Candle = {
      * Read candle by key (interval:token) and time
      */
     read: async ({interval, token, time}, args={}) => {
-        if (!time) time = Math.round((Date.now()/1000) - (Date.now()/1000) % (60*60*24))
+        if (time == null) time = Math.round(Date.now()/1000 - Date.now()/1000 % (60*60*24))
 
         return Resource.read({...{
             type: 'candle',
@@ -33,7 +33,7 @@ export const Candle = {
      * Scan candles by interval and time, sort by turnover
      */
     scanIntervalTimeTurnover: async ({interval, time, turnover=null, key=null}, args={}) => {
-        if (!time) time = Math.round((Date.now()/1000) - (Date.now()/1000) % (60*60*24))
+        if (time == null) time = Math.round(Date.now()/1000 - Date.now()/1000 % (60*60*24))
 
         return Resource.scan({...{
             type: 'candle',
@@ -48,7 +48,7 @@ export const Candle = {
      * Scan candles by interval and time, sort by change
      */
     scanIntervalTimeChange: async ({interval, time, change=null, key=null}, args={}) => {
-        if (!time) time = Math.round((Date.now()/1000) - (Date.now()/1000) % (60*60*24))
+        if (time == null) time = Math.round(Date.now()/1000 - Date.now()/1000 % (60*60*24))
 
         return Resource.scan({...{
             type: 'candle',

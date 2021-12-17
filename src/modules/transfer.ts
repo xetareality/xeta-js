@@ -7,7 +7,7 @@ export const Transfer = {
     /**
      * Create transfer
      */
-    create: async ({to, token, amount, from=null, message=null}, tx={}) => {
+    create: async ({to, token, amount=null, from=null, message=null}, tx={}) => {
         return Instruction.wrap({
             function: 'transfer.create',
             to: to,

@@ -14,11 +14,10 @@ export class Loot {
     /**
      * Transfer to loot pool
      */
-    transfer({amount}, tx={}) {
+    transfer(tx={}) {
         return Instruction.wrap({
             function: 'loot.transfer',
             pool: this.pool.address,
-            amount: Utils.amount(amount),
         }, tx)
     }
 
