@@ -14,12 +14,11 @@ export class Lottery {
     /**
      * Transfer to lottery pool
      */
-    transfer({amount}, tx={}) {
+    transfer(tx={}) {
         return Instruction.wrap({
             function: 'lottery.transfer',
             pool: this.pool.address,
             token: this.pool.token,
-            amount: Utils.amount(amount),
         }, tx)
     }
 

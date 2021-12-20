@@ -19,8 +19,6 @@ export const Pool = {
      * Create pool
      */
     create: async ({token, program, name=null, description=null, mechanism=null, candidates=null, rate=null, percentage=null, number=null, expires=null, answers=null, meta=null, minAmount=null, maxAmount=null, minTime=null, maxTime=null, transfersLimit=null, claimsLimit=null, tokenLimit=null, xetaLimit=null, tokenTarget=null, xetaTarget=null}, tx={}) => {
-        if (!['auction', 'launch', 'lending', 'lock', 'loot', 'lottery', 'royalty', 'staking', 'vote'].includes(program)) throw Error('program:invalid')
-
         return Instruction.wrap({
             function: 'pool.create',
             token: token,

@@ -253,7 +253,6 @@ launch.close()
 # Participant methods:
 launch.resolve()
 launch.transfer({amount: amount})
-launch.swap({amount: amount})
 launch.claim({claim: claim})
 ```
 
@@ -306,7 +305,7 @@ lottery.close()
 lottery.clear()
 
 # Participant methods:
-lottery.transfer({amount: amount})
+lottery.transfer()
 lottery.claim({claim: claim})
 lottery.resolve()
 ```

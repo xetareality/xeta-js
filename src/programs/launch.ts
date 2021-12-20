@@ -23,17 +23,6 @@ export class Launch {
     }
 
     /**
-     * Swap via launch pool
-     */
-    swap({amount}, tx={}) {
-        return Instruction.wrap({
-            function: 'launch.swap',
-            pool: this.pool.address,
-            amount: Utils.amount(amount),
-        }, tx)
-    }
-
-    /**
      * Resolve launch pool
      */
     resolve(tx={}) {
