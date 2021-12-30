@@ -31,7 +31,7 @@ export const Utils = {
      * Strip kv pairs where value is null or undefined
      */
     strip: (object, min=1) => {
-        var out = Object.fromEntries(Object.entries(object).filter(e => e[1] != null && e[1] != undefined))
+        var out = Object.fromEntries(Object.entries(object).filter(e => e[1] != null))
         if (Object.keys(out).length < min) throw Error('parameters:missing')
         return out
     },

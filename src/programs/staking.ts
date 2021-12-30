@@ -14,7 +14,7 @@ export class Staking {
     /**
      * Transfer to staking pool
      */
-    transfer({amount, unlocks=null, expires=null}, tx={}) {
+    transfer({amount, unlocks=null}, tx={}) {
         if (unlocks && unlocks < Date.now()+24*60*60*1000) throw Error('invalid:time')
 
         return Instruction.wrap({
@@ -22,7 +22,6 @@ export class Staking {
             pool: this.pool.address,
             amount: Utils.amount(amount),
             unlocks: unlocks,
-            expires: expires,
         }, tx)
     }
 
@@ -40,24 +39,24 @@ export class Staking {
     /**
      * Deposit to staking pool
      */
-    deposit({amount, unlocks=null, expires=null}, tx={}) {
+    deposit({amount, unlocks=null}, tx={}) {
         return Instruction.wrap({
             function: 'staking.deposit',
             pool: this.pool.address,
             amount: Utils.amount(amount),
             unlocks: unlocks,
-            expires: expires,
         }, tx)
     }
 
     /**
      * Withdraw from staking pool
      */
-    withdraw({claim}, tx={}) {
+    withdraw({claim, percentage=1}, tx={}) {
         return Instruction.wrap({
             function: 'staking.withdraw',
             pool: this.pool.address,
             claim: claim,
+            percentage: percentage,
         }, tx)
     }
 }

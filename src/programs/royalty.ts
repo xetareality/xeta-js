@@ -32,13 +32,12 @@ export class Royalty {
     /**
      * Deposit to royalty pool
      */
-    deposit({amount, unlocks=null, expires=null}, tx={}) {
+    deposit({amount, unlocks=null}, tx={}) {
         return Instruction.wrap({
             function: 'royalty.deposit',
             pool: this.pool.address,
             amount: Utils.amount(amount),
             unlocks: unlocks,
-            expires: expires,
         }, tx)
     }
 

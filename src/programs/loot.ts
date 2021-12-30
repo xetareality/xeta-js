@@ -24,13 +24,12 @@ export class Loot {
     /**
      * Deposit to loot pool
      */
-    deposit({token, unlocks=null, expires=null}, tx={}) {
+    deposit({token, unlocks=null}, tx={}) {
         return Instruction.wrap({
             function: 'loot.deposit',
             pool: this.pool.address,
             token: token,
             unlocks: unlocks,
-            expires: expires,
         }, tx)
     }
 

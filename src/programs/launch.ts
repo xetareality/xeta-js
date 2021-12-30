@@ -47,13 +47,12 @@ export class Launch {
     /**
      * Deposit to launch pool
      */
-    deposit({amount, unlocks=null, expires=null}, tx={}) {
+    deposit({amount, unlocks=null}, tx={}) {
         return Instruction.wrap({
             function: 'launch.deposit',
             pool: this.pool.address,
             amount: Utils.amount(amount),
             unlocks: unlocks,
-            expires: expires,
         }, tx)
     }
 

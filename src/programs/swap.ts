@@ -26,14 +26,13 @@ export class Swap {
     /**
      * Deposit to swap pool
      */
-    deposit({tokenAmount, xetaAmount, unlocks=null, expires=null}, tx={}) {
+    deposit({tokenAmount, xetaAmount, unlocks=null}, tx={}) {
         return Instruction.wrap({
             function: 'swap.deposit',
             pool: this.pool.address,
             tokenAmount: Utils.amount(tokenAmount),
             xetaAmount: Utils.amount(xetaAmount),
             unlocks: unlocks,
-            expires: expires,
         }, tx)
     }
 

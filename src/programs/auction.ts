@@ -25,10 +25,11 @@ export class Auction {
     /**
      * Deposit to auction pool
      */
-    deposit(tx={}) {
+    deposit({unlocks=null}, tx={}) {
         return Instruction.wrap({
             function: 'auction.deposit',
             pool: this.pool.address,
+            unlocks: unlocks,
         }, tx)
     }
 

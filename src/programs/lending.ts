@@ -14,7 +14,7 @@ export class Lending {
     /**
      * Transfer to lending pool
      */
-    transfer({amount, collateralization=2.5}, tx={}) {
+    transfer({amount, collateralization}, tx={}) {
         return Instruction.wrap({
             function: 'lending.transfer',
             pool: this.pool.address,
@@ -50,25 +50,25 @@ export class Lending {
     /**
      * Deposit to lending pool
      */
-    deposit({amount, unlocks=null, expires=null}, tx={}) {
+    deposit({amount, unlocks=null}, tx={}) {
         return Instruction.wrap({
             function: 'lending.deposit',
             pool: this.pool.address,
             amount: Utils.amount(amount),
             unlocks: unlocks,
-            expires: expires,
         }, tx)
     }
 
     /**
      * Withdraw from lending pool
      */
-    withdraw({claim}, tx={}) {
+    withdraw({claim, percentage=1}, tx={}) {
         return Instruction.wrap({
             function: 'lending.withdraw',
             pool: this.pool.address,
             token: this.pool.token,
             claim: claim,
+            percentage: percentage,
         }, tx)
     }
 }

@@ -18,7 +18,6 @@ export class Lottery {
         return Instruction.wrap({
             function: 'lottery.transfer',
             pool: this.pool.address,
-            token: this.pool.token,
         }, tx)
     }
 
@@ -46,13 +45,12 @@ export class Lottery {
     /**
      * Deposit to lottery pool
      */
-    deposit({amount=null, unlocks=null, expires=null}={}, tx={}) {
+    deposit({amount=null, unlocks=null}={}, tx={}) {
         return Instruction.wrap({
             function: 'lottery.deposit',
             pool: this.pool.address,
             amount: Utils.amount(amount),
             unlocks: unlocks,
-            expires: expires,
         }, tx)
     }
 
