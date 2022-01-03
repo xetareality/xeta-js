@@ -1,7 +1,7 @@
 import { Resource } from './resource'
 import { Instruction } from './instruction'
 import { Utils } from '../library/utils'
-import { Hashed } from '../library/hashed'
+import { Hash } from '../library/hash'
 
 export const Claim = {
     /**
@@ -85,7 +85,7 @@ export const Claim = {
         return Resource.scan({...{
             type: 'claim',
             index: 'holderCategory',
-            indexValue: (await Hashed.values([holder, category])).slice(-8),
+            indexValue: (await Hash.values([holder, category])).slice(-8),
             sort: 'created',
             sortValue: created,
             keyValue: hash,
@@ -98,7 +98,7 @@ export const Claim = {
         return Resource.scan({...{
             type: 'claim',
             index: 'issuerCategory',
-            indexValue: (await Hashed.values([issuer, category])).slice(-8),
+            indexValue: (await Hash.values([issuer, category])).slice(-8),
             sort: 'created',
             sortValue: created,
             keyValue: hash,
@@ -111,7 +111,7 @@ export const Claim = {
         return Resource.scan({...{
             type: 'claim',
             index: 'issuer',
-            indexValue: (await Hashed.values([issuer])).slice(-8),
+            indexValue: (await Hash.values([issuer])).slice(-8),
             sort: 'answer',
             sortValue: answer,
             keyValue: hash,
@@ -124,7 +124,7 @@ export const Claim = {
         return Resource.scan({...{
             type: 'claim',
             index: 'issuer',
-            indexValue: (await Hashed.values([issuer])).slice(-8),
+            indexValue: (await Hash.values([issuer])).slice(-8),
             sort: 'number',
             sortValue: number,
             keyValue: hash,
@@ -137,7 +137,7 @@ export const Claim = {
         return Resource.scan({...{
             type: 'claim',
             index: 'issuer',
-            indexValue: (await Hashed.values([issuer])).slice(-8),
+            indexValue: (await Hash.values([issuer])).slice(-8),
             sort: 'tokenAmount',
             sortValue: tokenAmount,
             keyValue: hash,
@@ -150,7 +150,7 @@ export const Claim = {
         return Resource.scan({...{
             type: 'claim',
             index: 'issuer',
-            indexValue: (await Hashed.values([issuer])).slice(-8),
+            indexValue: (await Hash.values([issuer])).slice(-8),
             sort: 'xetaAmount',
             sortValue: xetaAmount,
             keyValue: hash,
@@ -163,7 +163,7 @@ export const Claim = {
         return Resource.scan({...{
             type: 'claim',
             index: 'issuer',
-            indexValue: (await Hashed.values([issuer])).slice(-8),
+            indexValue: (await Hash.values([issuer])).slice(-8),
             sort: 'created',
             sortValue: created,
             keyValue: hash,
@@ -176,7 +176,7 @@ export const Claim = {
         return Resource.scan({...{
             type: 'claim',
             index: 'holder',
-            indexValue: (await Hashed.values([holder])).slice(-8),
+            indexValue: (await Hash.values([holder])).slice(-8),
             sort: 'created',
             sortValue: created,
             keyValue: hash,
@@ -189,7 +189,7 @@ export const Claim = {
         return Resource.scan({...{
             type: 'claim',
             index: 'issuerToken',
-            indexValue: (await Hashed.values([issuer, token])).slice(-8),
+            indexValue: (await Hash.values([issuer, token])).slice(-8),
             sort: 'created',
             sortValue: created,
             keyValue: hash,
@@ -202,7 +202,7 @@ export const Claim = {
         return Resource.scan({...{
             type: 'claim',
             index: 'holderToken',
-            indexValue: (await Hashed.values([holder, token])).slice(-8),
+            indexValue: (await Hash.values([holder, token])).slice(-8),
             sort: 'created',
             sortValue: created,
             keyValue: hash,
@@ -215,7 +215,7 @@ export const Claim = {
         return Resource.scan({...{
             type: 'claim',
             index: 'issuerHolder',
-            indexValue: (await Hashed.values([issuer, holder])).slice(-8),
+            indexValue: (await Hash.values([issuer, holder])).slice(-8),
             sort: 'created',
             sortValue: created,
             keyValue: hash,
@@ -228,7 +228,7 @@ export const Claim = {
         return Resource.scan({...{
             type: 'claim',
             index: 'issuerHolderToken',
-            indexValue: (await Hashed.values([issuer, holder, token])).slice(-8),
+            indexValue: (await Hash.values([issuer, holder, token])).slice(-8),
             sort: 'created',
             sortValue: created,
             keyValue: hash,

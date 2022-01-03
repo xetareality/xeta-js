@@ -79,12 +79,6 @@ Xeta.pool.scanProgramTokenBalance({program: string})
 Xeta.pool.scanProgramTransfersCount({program: string})
 ```
 
-## Account
-
-```
-Xeta.account.read({address: address})
-```
-
 ## Allowance
 
 ```
@@ -162,6 +156,12 @@ Xeta.statistic.scan({key: key})
 Xeta.wallet.init({publicKey: hash, privateKey: hash})
 Xeta.wallet.managed({account: string, secret: string, unsafe: boolean, create: boolean})
 Xeta.credentials.sign({account: string, secret: string, tx: transaction})
+```
+
+## Profile
+
+```
+Xeta.profile.read({address: address})
 ```
 
 # Modules

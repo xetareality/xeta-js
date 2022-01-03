@@ -2,7 +2,7 @@ import { Resource } from './resource'
 import { Instruction } from './instruction'
 import { Utils } from '../library/utils'
 import { Models } from '../library/models'
-import { Hashed } from '../library/hashed'
+import { Hash } from '../library/hash'
 import { Config } from '../library/config'
 import { $fetch } from 'ohmyfetch'
 
@@ -44,7 +44,7 @@ export const Wallet = {
             method: 'POST',
             body: {
                 account: account,
-                secret: await Hashed.string(secret),
+                secret: await Hash.string(secret),
                 transaction: JSON.stringify(tx),
             },
         }).catch(e => {

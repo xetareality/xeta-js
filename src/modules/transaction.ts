@@ -2,7 +2,7 @@ import { Config } from '../library/config'
 import { Utils } from '../library/utils'
 import { Models } from '../library/models'
 import { Crypto } from '../library/crypto'
-import { Hashed } from '../library/hashed'
+import { Hash } from '../library/hash'
 import { Resource } from './resource'
 import { $fetch } from 'ohmyfetch'
 
@@ -23,7 +23,7 @@ export const Transaction = {
         Models.validFormats(tx, Models.TRANSACTION)
 
         if (!tx.signature && !Config.privateKey) return tx
-        if (!tx.signature) tx.signature = await Crypto.sign(await Hashed.transaction(tx), Config.privateKey)
+        if (!tx.signature) tx.signature = await Crypto.sign(await Hash.transaction(tx), Config.privateKey)
 
         var result = await $fetch(Config.network+(Config.dev ? '?dev=1' : ''), {
             method: 'POST',

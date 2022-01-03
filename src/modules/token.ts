@@ -2,7 +2,7 @@ import { Resource } from './resource'
 import { Instruction } from './instruction'
 import { Utils } from '../library/utils'
 import { Models } from '../library/models'
-import { Hashed } from '../library/hashed'
+import { Hash } from '../library/hash'
 
 export const Token = {
     /**
@@ -154,7 +154,7 @@ export const Token = {
         return Resource.scan({...{
             type: 'token',
             index: 'ownerCategory',
-            indexValue: (await Hashed.values([owner, category])).slice(-8),
+            indexValue: (await Hash.values([owner, category])).slice(-8),
             sort: 'created',
             sortValue: created,
             keyValue: address,
@@ -167,7 +167,7 @@ export const Token = {
         return Resource.scan({...{
             type: 'token',
             index: 'creatorCategory',
-            indexValue: (await Hashed.values([creator, category])).slice(-8),
+            indexValue: (await Hash.values([creator, category])).slice(-8),
             sort: 'created',
             sortValue: created,
             keyValue: address,

@@ -1,20 +1,20 @@
 import { Utils } from './utils'
 
-export const Hashed = {
+export const Hash = {
     transaction: async (body): Promise<string> => {
-        return Hashed.values([
+        return Hash.values([
             body.sender,
             body.instructions,
             body.nonce])
     },
     allowance: async (body): Promise<string> => {
-        return Hashed.values([
+        return Hash.values([
             body.address,
             body.spender,
             body.token])
     },
     balance: async (body): Promise<string> => {
-        return Hashed.values([
+        return Hash.values([
             body.address,
             body.token])
     },
@@ -26,4 +26,7 @@ export const Hashed = {
         var enc = await Utils.sha256(body, double)
         return Utils.base58encode(enc)
     },
+    inverse: async (hash): Promise<string> => {
+        return Utils.base58encode(Utils.base58decode(hash).reverse())
+    }
 }

@@ -1,7 +1,7 @@
 import { Resource } from './resource'
 import { Instruction } from './instruction'
 import { Utils } from '../library/utils'
-import { Hashed } from '../library/hashed'
+import { Hash } from '../library/hash'
 
 export const Allowance = {
     /**
@@ -39,7 +39,7 @@ export const Allowance = {
     readAddressSpenderToken: async ({address, spender, token}, args={}) => {
         return Resource.read({...{
             type: 'allowance',
-            key: await Hashed.allowance({address: address, spender: spender, token: token}),
+            key: await Hash.allowance({address: address, spender: spender, token: token}),
         }, ...args})
     },
     /**

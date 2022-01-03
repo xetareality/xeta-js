@@ -1,7 +1,7 @@
 import { Resource } from './resource'
 import { Instruction } from './instruction'
 import { Utils } from '../library/utils'
-import { Hashed } from '../library/hashed'
+import { Hash } from '../library/hash'
 
 export const Balance = {
     /**
@@ -19,7 +19,7 @@ export const Balance = {
     readAddressToken: async ({address, token}, args={}) => {
         return Resource.read({...{
             type: 'balance',
-            key: await Hashed.balance({address: address, token: token}),
+            key: await Hash.balance({address: address, token: token}),
         }, ...args})
     },
     /**

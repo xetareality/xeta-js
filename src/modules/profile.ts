@@ -4,13 +4,13 @@ import { Utils } from '../library/utils'
 import { Config } from '../library/config'
 import { $fetch } from 'ohmyfetch'
 
-export const Address = {
+export const Profile = {
     /**
-     * Update (or create) address
+     * Update (or create) profile
      */
     update: async ({name=null, description=null, links=null, meta=null, preview=null, category=null}, tx={}) => {
         return Instruction.wrap({
-            function: 'address.update',
+            function: 'profile.update',
             name: name,
             description: description,
             links: links,
@@ -20,10 +20,10 @@ export const Address = {
         }, tx)
     },
     /**
-     * Read address data for an address (pool, token, balance)
+     * Read profile data for an address (pool, token, balance)
      */
     read: async ({address}) => {
-        var result = await $fetch(Config.interface+'/address', {
+        var result = await $fetch(Config.interface+'/profile', {
             method: 'GET',
             params: {address: address, dev: Config.dev},
         }).catch(e => {

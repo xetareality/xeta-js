@@ -1,10 +1,10 @@
-import { Address } from './modules/address'
 import { Allowance } from './modules/allowance'
 import { Balance } from './modules/balance'
 import { Candle } from './modules/candle'
 import { Claim } from './modules/claim'
 import { Instruction } from './modules/instruction'
 import { Pool } from './modules/pool'
+import { Profile } from './modules/profile'
 import { Registry } from './modules/registry'
 import { Resource } from './modules/resource'
 import { Search } from './modules/search'
@@ -27,7 +27,7 @@ import { Vote } from './programs/vote'
 
 import { Config } from './library/config'
 import { Crypto } from './library/crypto'
-import { Hashed } from './library/hashed'
+import { Hash } from './library/hash'
 import { Models } from './library/models'
 import { Utils } from './library/utils'
 
@@ -35,13 +35,13 @@ const Xeta = {
     /**
      * Modules
      */
-    address: Address,
     allowance: Allowance,
     balance: Balance,
     candle: Candle,
     claim: Claim,
     instruction: Instruction,
     pool: Pool,
+    profile: Profile,
     registry: Registry,
     resource: Resource,
     search: Search,
@@ -70,7 +70,7 @@ const Xeta = {
      */
     config: Config,
     crypto: Crypto,
-    hashed: Hashed,
+    hash: Hash,
     models: Models,
     utils: Utils,
 }

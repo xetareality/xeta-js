@@ -1,7 +1,7 @@
 import { Resource } from './resource'
 import { Instruction } from './instruction'
 import { Utils } from '../library/utils'
-import { Hashed } from '../library/hashed'
+import { Hash } from '../library/hash'
 
 export const Transfer = {
     /**
@@ -94,7 +94,7 @@ export const Transfer = {
         return Resource.scan({...{
             type: 'transfer',
             index: 'fromToken',
-            indexValue: (await Hashed.values([from, token])).slice(-8),
+            indexValue: (await Hash.values([from, token])).slice(-8),
             sort: 'created',
             sortValue: created,
             keyValue: hash,
@@ -107,7 +107,7 @@ export const Transfer = {
         return Resource.scan({...{
             type: 'transfer',
             index: 'toToken',
-            indexValue: (await Hashed.values([to, token])).slice(-8),
+            indexValue: (await Hash.values([to, token])).slice(-8),
             sort: 'created',
             sortValue: created,
             keyValue: hash,

@@ -1,7 +1,7 @@
 import { Resource } from './resource'
 import { Instruction } from './instruction'
 import { Utils } from '../library/utils'
-import { Hashed } from '../library/hashed'
+import { Hash } from '../library/hash'
 
 import { Auction } from '../programs/auction'
 import { Launch } from '../programs/launch'
@@ -90,7 +90,7 @@ export const Pool = {
         return Resource.scan({...{
             type: 'pool',
             index: 'tokenProgram',
-            indexValue: (await Hashed.values([token, program])).slice(-8),
+            indexValue: (await Hash.values([token, program])).slice(-8),
             sort: 'created',
             sortValue: created,
             keyValue: address,
