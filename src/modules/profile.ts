@@ -19,17 +19,4 @@ export const Profile = {
             category: category,
         }, tx)
     },
-    /**
-     * Read profile data for an address (pool, token, balance)
-     */
-    read: async ({address}) => {
-        var result = await $fetch(Config.interface+'/profile', {
-            method: 'GET',
-            params: {address: address, dev: Config.dev},
-        }).catch(e => {
-            throw Error(e.data)
-        })
-
-        return {pool: result.pool, balance: result.balance, token: result.token}
-    },
 }

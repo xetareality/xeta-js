@@ -79,6 +79,12 @@ Xeta.pool.scanProgramTokenBalance({program: string})
 Xeta.pool.scanProgramTransfersCount({program: string})
 ```
 
+## Address
+
+```
+Xeta.address.read({address: address})
+```
+
 ## Allowance
 
 ```
@@ -158,12 +164,6 @@ Xeta.wallet.managed({account: string, secret: string, unsafe: boolean, create: b
 Xeta.credentials.sign({account: string, secret: string, tx: transaction})
 ```
 
-## Profile
-
-```
-Xeta.profile.read({address: address})
-```
-
 # Modules
 
 Modules are wrapper methods that submit transactions to the network endpoint. Fees for methods are fixed and most recent fees can be found on [docs.xetareality.com](https://docs.xetareality.com). 
@@ -198,10 +198,10 @@ Xeta.claim.transfer({claim: claim, to: address})
 Xeta.claim.resolve({claim: claim})
 ```
 
-## Account
+## Profile
 
 ```
-Xeta.account.update({name: string, description: string, links=[string], meta: object, icon: url, category: string})
+Xeta.profile.update({name: string, description: string, links=[string], meta: object, icon: url, category: string})
 ```
 
 ## Allowance
