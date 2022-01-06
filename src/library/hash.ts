@@ -26,7 +26,7 @@ export const Hash = {
         var enc = await Utils.sha256(body, double)
         return Utils.base58encode(enc)
     },
-    inverse: async (hash): Promise<string> => {
+    inverse: (hash): string => {
         return Utils.base58encode(Utils.base58decode(hash).reverse())
     }
 }

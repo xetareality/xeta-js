@@ -8,11 +8,12 @@ export const Token = {
     /**
      * Create token
      */
-    create: async ({name, symbol=null, supply=null, reserve=null, description=null, links=null, meta=null, preview=null, owner=null, frozen=null, category=null, object=null, mime=null, content=null}, tx={}) => {
-        var token = Utils.strip({
+    create: async ({name, symbol=null, supply=null, reserve=null, whole=null, description=null, links=null, meta=null, preview=null, owner=null, frozen=null, category=null, object=null, mime=null, content=null}, tx={}) => {
+        return Instruction.wrap({
             function: 'token.create',
             name: name,
             symbol: symbol,
+            whole: whole,
             supply: Utils.amount(supply),
             reserve: Utils.amount(reserve),
             description: description,
@@ -25,17 +26,7 @@ export const Token = {
             object: object,
             mime: mime,
             content: content,
-        })
-
-        if (supply) {
-            Models.requiredFields(token, ['name', 'symbol', 'supply'])
-            Models.exclusiveFields(token, ['function', 'name', 'description', 'links', 'meta', 'preview', 'symbol', 'supply', 'reserve'])
-        } else {
-            Models.requiredFields(token, ['name'])
-            Models.exclusiveFields(token, ['function', 'name', 'description', 'links', 'meta', 'preview', 'owner', 'frozen', 'category', 'object', 'mime', 'content'])
-        }
-
-        return Instruction.wrap(token, tx)
+        }, tx)
     },
     /**
      * Update specified values of an token

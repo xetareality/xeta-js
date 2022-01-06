@@ -122,6 +122,7 @@ export const Models = {
         symbol: ['string'],
         supply: ['amount'],
         reserve: ['amount'],
+        whole: ['boolean'],
 
         owner: ['hash'],
         object: ['string'],
