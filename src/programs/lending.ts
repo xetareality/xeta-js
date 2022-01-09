@@ -62,12 +62,13 @@ export class Lending {
     /**
      * Withdraw from lending pool
      */
-    withdraw({claim}, tx={}) {
+    withdraw({claim, percentage=1}, tx={}) {
         return Instruction.wrap({
             function: 'lending.withdraw',
             pool: this.pool.address,
             token: this.pool.token,
             claim: claim,
+            percentage: percentage,
         }, tx)
     }
 }

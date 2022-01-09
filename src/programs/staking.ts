@@ -51,11 +51,12 @@ export class Staking {
     /**
      * Withdraw from staking pool
      */
-    withdraw({claim}, tx={}) {
+    withdraw({claim, percentage=1}, tx={}) {
         return Instruction.wrap({
             function: 'staking.withdraw',
             pool: this.pool.address,
             claim: claim,
+            percentage: percentage,
         }, tx)
     }
 }

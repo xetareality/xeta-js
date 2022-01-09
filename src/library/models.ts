@@ -170,6 +170,7 @@ export const Models = {
         created: ['timestamp'],
         origin: ['hash'],
         tokenProgram: ['index'],
+        creatorProgram: ['index'],
         activeProgram: ['string'],
         
         name: ['string'],
@@ -200,7 +201,6 @@ export const Models = {
         transfersCount: ['integer'],
         claimsCount: ['integer'],
         closed: ['boolean'],
-        leader: ['hash'],
         number: ['number'],
     },
     WALLET: {

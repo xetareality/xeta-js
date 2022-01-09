@@ -97,6 +97,19 @@ export const Pool = {
         }, ...args})
     },
     /**
+     * Scan pools by token and program, sort by created
+     */
+    scanCreatorProgramCreated: async ({creator, program, created=null, address=null}, args={}) => {
+        return Resource.scan({...{
+            type: 'pool',
+            index: 'creatorProgram',
+            indexValue: (await Hash.values([creator, program])).slice(-8),
+            sort: 'created',
+            sortValue: created,
+            keyValue: address,
+        }, ...args})
+    },
+    /**
      * Scan pools by name, sort by created
      */
     scanNameCreated: async ({name, created=null, address=null}, args={}) => {
