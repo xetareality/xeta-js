@@ -97,7 +97,7 @@ export const Pool = {
         }, ...args})
     },
     /**
-     * Scan pools by token and program, sort by created
+     * Scan pools by creator and program, sort by created
      */
     scanCreatorProgramCreated: async ({creator, program, created=null, address=null}, args={}) => {
         return Resource.scan({...{
