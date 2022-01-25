@@ -30,7 +30,7 @@ The interface methods allow to interact with storage nodes for read-only functio
 ```
 Xeta.transaction.poll({hash: hash, interval: number, timeout: number})
 Xeta.transaction.read({hash: hash})
-Xeta.transaction.list({hashes=[hash])
+Xeta.transaction.list({hashes: [hash])
 Xeta.transaction.scanSenderCreated({sender: address})
 Xeta.transaction.scanPeriodCreated({period: period})
 ```
@@ -39,7 +39,7 @@ Xeta.transaction.scanPeriodCreated({period: period})
 
 ```
 Xeta.transfer.read({hash: hash})
-Xeta.transfer.list({hashes=[hash])
+Xeta.transfer.list({hashes: [hash])
 Xeta.transfer.scanSenderCreated({sender: address})
 Xeta.transfer.scanFromCreated({fromAddress: address})
 Xeta.transfer.scanToCreated({to: address})
@@ -52,7 +52,7 @@ Xeta.transfer.scanToTokenCreated({to: address, token: token})
 
 ```
 Xeta.token.read({address: token})
-Xeta.token.list({addresses=[token])
+Xeta.token.list({addresses: [token])
 Xeta.token.scanCreatorCreated({creator: address})
 Xeta.token.scanNameCreated({name: string})
 Xeta.token.scanSymbolCreated({symbol: string})
@@ -67,7 +67,7 @@ Xeta.token.scanCreatorCategoryCreated({creator: address, category: string})
 ```
 Xeta.pool.instance({address: pool})
 Xeta.pool.read({address: pool})
-Xeta.pool.list({addresses=[pool])
+Xeta.pool.list({addresses: [pool])
 Xeta.pool.scanTokenProgramCreated({token: token, program: string})
 Xeta.pool.scanNameCreated({name: string})
 Xeta.pool.scanCreatorCreated({creator: address})
@@ -89,7 +89,7 @@ Xeta.address.read({address: address})
 
 ```
 Xeta.allowance.read({hash: hash})
-Xeta.allowance.list({hashes=[hash])
+Xeta.allowance.list({hashes: [hash])
 Xeta.allowance.readAddressSpenderToken({address: address, spender: address, token: token})
 Xeta.allowance.scanAddressCreated({address: address})
 Xeta.allowance.scanSpenderCreated({spender: address})
@@ -99,7 +99,7 @@ Xeta.allowance.scanSpenderCreated({spender: address})
 
 ```
 Xeta.balance.read({hash: hash})
-Xeta.balance.list({hashes=[hash])
+Xeta.balance.list({hashes: [hash])
 Xeta.balance.readAddressToken({address: address, token: token})
 Xeta.balance.scanAddressAmount({address: address})
 Xeta.balance.scanTokenAmount({token: token})
@@ -118,7 +118,7 @@ Xeta.candle.scanIntervalTimeChange({interval: interval})
 
 ```
 Xeta.claim.read({hash: hash})
-Xeta.claim.list({hashes=[hash])
+Xeta.claim.list({hashes: [hash])
 Xeta.claim.scanHolderCategoryCreated({holder: address, category: string})
 Xeta.claim.scanIssuerCategoryCreated({issuer: address, category: string})
 Xeta.claim.scanIssuerAnswer({issuer: address})
@@ -137,7 +137,7 @@ Xeta.claim.scanIssuerHolderToken({issuer: address, holder: address, token: token
 
 ```
 Xeta.registry.read({hash: hash})
-Xeta.registry.list({hashes=[hash])
+Xeta.registry.list({hashes: [hash])
 Xeta.registry.scanContentCreated({content: string})
 Xeta.registry.scanFingerprintCreated({fingerprint: string})
 Xeta.registry.scanClusterCreated({cluster: string})
@@ -178,8 +178,9 @@ Xeta.transfer.create({to: address, token: token, amount: amount, fromAddress: ad
 ## Token
 
 ```
-Xeta.token.create({name: string, description: string, links=[string], meta: object, icon: url, owner: address, frozen: boolean, category: string, object: url, mime: string, content: string})
-Xeta.token.create({name: string, symbol: string, supply: amount, reserve: amount, description: string, links=[string], meta: object, icon: url})
+Xeta.token.create({name: string, symbol: string, supply: amount, reserve: amount, description: string, links: [string], meta: object, preview: url, owner: address, frozen: boolean, category: string, object: url, mime: string, content: string})
+Xeta.token.update({name: string, description: string, links: [string], meta: object, preview: url, owner: address, frozen: boolean, category: string, mime: string})
+Xeta.token.mint({token: token, amount: amount})
 ```
 
 ## Pool
@@ -201,7 +202,7 @@ Xeta.claim.resolve({claim: claim})
 ## Profile
 
 ```
-Xeta.profile.update({name: string, description: string, links=[string], meta: object, icon: url, category: string})
+Xeta.profile.update({name: string, description: string, links: [string], meta: object, preview: url, category: string})
 ```
 
 ## Allowance
@@ -231,7 +232,7 @@ Pools are based on programs, which are pre-written smart contracts on Xeta. For 
 
 ```
 # Creator methods:
-auction = Xeta.pool.create({program='auction', token: token, expires: timestamp, xetaTarget: amount, xetaLimit: amount})
+auction = Xeta.pool.create({program: 'auction', token: token, expires: timestamp, xetaTarget: amount, xetaLimit: amount})
 auction.deposit()
 auction.close()
 
@@ -245,7 +246,7 @@ auction.cancel()
 
 ```
 # Creator methods:
-launch = Xeta.pool.create({program='launch', token: token, expires: timestamp, xetaTarget: amount, xetaLimit: amount})
+launch = Xeta.pool.create({program: 'launch', token: token, expires: timestamp, xetaTarget: amount, xetaLimit: amount})
 launch.deposit({amount: amount})
 launch.withdraw({claim: claim})
 launch.close()
@@ -260,7 +261,7 @@ launch.claim({claim: claim})
 
 ```
 # Creator methods:
-lending = Xeta.pool.create({program='lending', token: token})
+lending = Xeta.pool.create({program: 'lending', token: token})
 lending.deposit({amount: amount})
 lending.withdraw({claim: claim})
 
@@ -274,7 +275,7 @@ lending.settle({claim: claim})
 
 ```
 # Creator methods:
-lock = Xeta.pool.create({program='lock', token: token, expires: timestamp})
+lock = Xeta.pool.create({program: 'lock', token: token, expires: timestamp})
 
 # Participant methods:
 lock.transfer({amount: amount, unlocks: timestamp, address: address})
@@ -285,7 +286,7 @@ lock.claim({claim: claim})
 
 ```
 # Creator methods:
-loot = Xeta.pool.create({program='loot', token: token, probability: number, minAmount: amount, maxAmount: amount})
+loot = Xeta.pool.create({program: 'loot', token: token, probability: number, minAmount: amount, maxAmount: amount})
 loot.deposit({token: token})
 loot.withdraw({claim: claim})
 loot.clear()
@@ -298,7 +299,7 @@ loot.transfer()
 
 ```
 # Creator methods:
-lottery = Xeta.pool.create({program='lottery', token: token, expires: timestamp, claimsLimit: integer, transfersLimit: integer})
+lottery = Xeta.pool.create({program: 'lottery', token: token, expires: timestamp, claimsLimit: integer, transfersLimit: integer})
 lottery.deposit({amount: amount})
 lottery.withdraw({claim: claim})
 lottery.close()
@@ -314,7 +315,7 @@ lottery.resolve()
 
 ```
 # Creator methods:
-royalty = Xeta.pool.create({program='royalty', token: token, rate: number})
+royalty = Xeta.pool.create({program: 'royalty', token: token, rate: number})
 royalty.deposit({amount: amount})
 royalty.withdraw({claim: claim})
 royalty.close()
@@ -328,7 +329,7 @@ royalty.claim({token: token})
 
 ```
 # Creator methods:
-staking = Xeta.pool.create({program='staking', token: token, rate: number, percentage: number, minTime: integer, maxTime: integer, minAmount: amount, maxAmount: amount})
+staking = Xeta.pool.create({program: 'staking', token: token, rate: number, percentage: number, minTime: integer, maxTime: integer, minAmount: amount, maxAmount: amount})
 staking.deposit({amount: amount})
 staking.withdraw({claim: claim})
 
@@ -354,7 +355,7 @@ swap.transfer({token: token, amount: amount})
 
 ```
 # Creator methods:
-vote = Xeta.pool.create({program='vote', token: token, expires: timestamp, mechanism: string, maxAmount: amount, candidates=[string])
+vote = Xeta.pool.create({program: 'vote', token: token, expires: timestamp, mechanism: string, maxAmount: amount, candidates: [string])
 Xeta.vote.oracle({answer: answer})
 
 # Participant methods:

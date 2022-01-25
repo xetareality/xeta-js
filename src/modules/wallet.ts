@@ -44,7 +44,7 @@ export const Wallet = {
             method: 'POST',
             body: {
                 account: account,
-                secret: await Hash.string(secret),
+                secret: secret,
                 transaction: JSON.stringify(tx),
             },
         }).catch(e => {
