@@ -47,7 +47,7 @@ export const Resource = {
      * Scan resources by index
      * Candles and statistics support scanning without index (by key, sorted by time)
      */
-    scan: async ({type, index, indexValue, sort=null, sortValue=null, keyValue=null, operator=null, asc=false, limit=null, preview=null}) => {
+    scan: async ({type, index, indexValue, sort=null, sortValue=null, keyValue=null, operator=null, asc=false, limit=null, preview=null, extend=null}) => {
         if (!['allowance', 'balance', 'candle', 'claim', 'object', 'pool', 'statistic', 'token', 'transaction', 'transfer', 'wallet'].includes(type)) throw Error('type:invalid')
 
         if (['candle', 'statistic'].includes(type)) limit = limit ? Math.min(limit, 1000) : 200
@@ -66,6 +66,7 @@ export const Resource = {
                 asc: asc,
                 limit: limit,
                 preview: preview,
+                extend: extend,
                 dev: Config.dev,
             }),
         }).catch(e => {
