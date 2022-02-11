@@ -1,6 +1,7 @@
 import { Config } from './config'
 import { Utils } from './utils'
 import * as ed from 'noble-ed25519'
+import * as argon2 from 'argon2-browser'
 
 export const Crypto = {
     generatePrivate: (): string => {
@@ -21,9 +22,52 @@ export const Crypto = {
             Utils.base58decode(privateKey)))
     },
     verify: async (message: string, signature: string, publicKey: string): Promise<boolean> => {
-        return await ed.verify(
+        return ed.verify(
             Utils.base58decode(signature),
             Utils.base58decode(message),
             Utils.base58decode(publicKey))
+    },
+    crypto: () => {
+        var webCrypto = typeof self === 'object' && 'crypto' in self ? self.crypto : undefined
+        var nodeRequire = typeof module !== 'undefined' && typeof module.require === 'function' && module.require.bind(module)
+
+        return {node: nodeRequire && !webCrypto ? nodeRequire('crypto') : undefined, web: webCrypto}
+    },
+    hash: async (bytes, algorithm) => {
+        var crypto = Crypto.crypto()
+        if (crypto.web) return new Uint8Array(await crypto.web.subtle.digest({sha256: 'SHA-256', sha512: 'SHA-512'}[algorithm], bytes))
+        else if (crypto.node) return new Uint8Array(crypto.node.createHash(algorithm).update(bytes).digest())
+        else throw new Error('hashing:unavailable')
+    },
+    pbkdf2: async (message, salt=null) => {
+        var crypto = Crypto.crypto()
+
+        if (crypto.web) {
+            var key = await crypto.web.subtle.importKey('raw', new TextEncoder().encode(message), 'PBKDF2', false, ['deriveBits'])
+            var buffer = await crypto.web.subtle.deriveBits({name: 'PBKDF2', hash: 'SHA-256', salt: new TextEncoder().encode(salt || ''), iterations: 1e6}, key, 256)
+            return Utils.base58encode(new Uint8Array(buffer))
+        }
+        else if (crypto.node) {
+            return new Promise((resolve, reject) => {
+                crypto.node.pbkdf2(message, salt || '', 1e6, 32, 'sha256', (err, buffer) => {
+                    if (err) reject(err)
+                    resolve(Utils.base58encode(new Uint8Array(buffer)))
+                })
+            })
+        }
+        else throw new Error('hashing:unavailable')
+    },
+    argon2: async (message, salt=null) => {
+        return argon2
+            .hash({
+                pass: 'p@ssw0rd',
+                salt: 'somesalt',
+                time: 1,
+                mem: 1024,
+                hashLen: 32,
+                parallelism: 1,
+                type: argon2.ArgonType.Argon2id,
+            })
+            .then(hash => Utils.base58encode(hash.hash))
     },
 }
