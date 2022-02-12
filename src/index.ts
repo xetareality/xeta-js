@@ -75,6 +75,6 @@ const Xeta = {
     hash: Hash,
     models: Models,
     utils: Utils,
-}
+};
 
 export default Xeta

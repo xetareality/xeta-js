@@ -1,4 +1,5 @@
 import { Utils } from './utils'
+import { Crypto } from './crypto'
 
 export const Hash = {
     transaction: async (body): Promise<string> => {
@@ -19,11 +20,14 @@ export const Hash = {
             body.token])
     },
     values: async (values): Promise<string> => {
-        var enc = await Utils.sha256(JSON.stringify(values))
+        var bytes = new TextEncoder().encode(JSON.stringify(values))
+        var enc = await Crypto.hash(bytes, 'sha256')
         return Utils.base58encode(enc)
     },
     string: async (body, double=true): Promise<string> => {
-        var enc = await Utils.sha256(body, double)
+        var bytes = new TextEncoder().encode(body)
+        var enc = await Crypto.hash(bytes, 'sha256')
+        if (double) enc = await Crypto.hash(enc, 'sha256')
         return Utils.base58encode(enc)
     },
     inverse: (hash): string => {

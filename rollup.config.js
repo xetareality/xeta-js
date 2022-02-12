@@ -39,7 +39,8 @@ export default  {
     commonjs({
       include: 'node_modules/**',
       namedExports: {
-        'node_modules/js-sha256/src/sha256.js': ['sha256']
-      }}),
+        'node_modules/scrypt-js/scrypt.js': ['syncScrypt']
+      }
+    }),
   ]
 }

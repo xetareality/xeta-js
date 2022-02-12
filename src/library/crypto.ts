@@ -1,7 +1,7 @@
 import { Config } from './config'
 import { Utils } from './utils'
 import * as ed from 'noble-ed25519'
-import * as argon2 from 'argon2-browser'
+import * as scrypt from 'scrypt-js'
 
 export const Crypto = {
     generatePrivate: (): string => {
@@ -39,6 +39,9 @@ export const Crypto = {
         else if (crypto.node) return new Uint8Array(crypto.node.createHash(algorithm).update(bytes).digest())
         else throw new Error('hashing:unavailable')
     },
+    /**
+     * Pbkdf2 implementation using the native crypto module
+     */
     pbkdf2: async (message, salt=null) => {
         var crypto = Crypto.crypto()
 
@@ -55,19 +58,22 @@ export const Crypto = {
                 })
             })
         }
-        else throw new Error('hashing:unavailable')
+        else throw Error('hashing:unavailable')
     },
-    argon2: async (message, salt=null) => {
-        return argon2
-            .hash({
-                pass: 'p@ssw0rd',
-                salt: 'somesalt',
-                time: 1,
-                mem: 1024,
-                hashLen: 32,
-                parallelism: 1,
-                type: argon2.ArgonType.Argon2id,
-            })
-            .then(hash => Utils.base58encode(hash.hash))
-    },
+    /**
+     * Scrypt implementation to generate brain wallet
+     * Uses account value as salt combined with secret password
+     */
+    brainwallet: (account, secret) => {
+        if (account.length < 6 || account.length > 80 || !/^[a-zA-Z0-9-+@_\.]*$/.test(account)) throw Error('account:format')
+        if (secret.length < 6 || secret.length > 80 || !/^[a-zA-Z0-9-+@_\.]*$/.test(account)) throw Error('secret:format')
+
+        var bytes = scrypt.syncScrypt(
+            new TextEncoder().encode(secret),
+            new TextEncoder().encode(account),
+            1<<16, 8, 1, 32
+        )
+
+        return Utils.base58encode(bytes)
+    }
 }
