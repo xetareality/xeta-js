@@ -1,24 +1,25 @@
 {
   "name": "xeta-js",
-  "version": "0.9.4",
+  "version": "0.9.6",
   "description": "A serverless blockchain for Metaverse, Gaming, and NFT applications.",
   "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
+  "module": "dist/esm/index.mjs",
   "types": "dist/types/index.d.ts",
   "files": [
     "dist"
   ],
   "exports": {
     "require": "./dist/cjs/index.js",
-    "import": "./dist/esm/index.js"
+    "import": "./dist/esm/index.mjs"
   },
   "scripts": {
     "clean": "rimraf dist",
     "declarations": "tsc -p tsconfig.json",
-    "build:esm": "cross-env BABEL_ENV=esmUnbundled babel src --extensions '.ts' --out-dir 'dist/esm' --source-maps",
+    "build:esm": "cross-env BABEL_ENV=esmUnbundled babel src --extensions '.ts' --out-dir 'dist/esm' --out-file-extension .mjs --source-maps",
     "build:cjs": "cross-env BABEL_ENV=cjs babel src --extensions '.ts' --out-dir 'dist/cjs' --source-maps",
     "build:bundles": "cross-env BABEL_ENV=esmBundled rollup -c",
     "build": "npm-run-all -l clean -p build:esm build:cjs build:bundles declarations",
+    "postbuild": "echo '{\"type\": \"module\"}' > dist/esm/package.json && echo '{\"type\": \"commonjs\"}' > dist/cjs/package.json",
     "test": "jest"
   },
   "repository": {
@@ -56,8 +57,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.16.0",
+    "@noble/ed25519": "^1.5.3",
     "big.js": "^6.1.1",
-    "noble-ed25519": "^1.2.6",
     "ohmyfetch": "^0.4.2",
     "scrypt-js": "^3.0.1"
   }
