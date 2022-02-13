@@ -1,6 +1,6 @@
 import { Config } from './config'
 import { Utils } from './utils'
-import * as ed from 'noble-ed25519'
+import * as ed from '@noble/ed25519'
 import * as scrypt from 'scrypt-js'
 
 export const Crypto = {
