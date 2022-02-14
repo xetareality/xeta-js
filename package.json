@@ -1,6 +1,6 @@
 {
   "name": "xeta-js",
-  "version": "0.9.9",
+  "version": "1.0.0",
   "description": "A serverless blockchain for Metaverse, Gaming, and NFT applications.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
