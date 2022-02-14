@@ -10,11 +10,10 @@ export const Search = {
      * If query is valid hash, search returns resource by key (if available)
      * If query is string, search returns tokens & pools matching string in name & symbol
      */
-    query: async ({query}) => {
-        return $fetch(Config.interface+'/search', {
-            method: 'GET',
-            params: {query: query, dev: Config.dev},
-        }).catch(e => {
+    query: async ({query, fetch=null}) => {
+        var params = new URLSearchParams({query: query, dev: Config.dev} as any).toString()
+
+        return (fetch || $fetch)(Config.interface+'/search?'+params).catch(e => {
             throw Error(e.data)
         })
     },
