@@ -6,6 +6,7 @@ export const Config = {
     account: null,
     secret: null,
     dev: null,
+    identity: null,
     interface: 'https://interface.xetareality.com',
     network: 'https://network.xetareality.com',
     xetaAddress: '11111111111111111111111111111xeta',

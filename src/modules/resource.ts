@@ -16,6 +16,7 @@ export const Resource = {
             sortValue: sortValue,
             preview: preview,
             dev: Config.dev,
+            identity: Config.identity,
         }) as any).toString()
 
         return (fetch || $fetch)(Config.interface+'/read?'+params).catch(e => {
@@ -35,6 +36,7 @@ export const Resource = {
             sortValues: sortValues,
             preview: preview,
             dev: Config.dev,
+            identity: Config.identity,
         }) as any).toString()
 
         return (fetch || $fetch)(Config.interface+'/list?'+params).catch(e => {
@@ -64,6 +66,7 @@ export const Resource = {
             preview: preview,
             extend: extend,
             dev: Config.dev,
+            identity: Config.identity,
         }) as any).toString()
 
         return (fetch || $fetch)(Config.interface+'/scan?'+params).catch(e => {

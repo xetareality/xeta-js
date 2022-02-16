@@ -11,7 +11,11 @@ export const Search = {
      * If query is string, search returns tokens & pools matching string in name & symbol
      */
     query: async ({query, fetch=null}) => {
-        var params = new URLSearchParams({query: query, dev: Config.dev} as any).toString()
+        var params = new URLSearchParams({
+            query: query,
+            dev: Config.dev,
+            identity: Config.identity,
+        } as any).toString()
 
         return (fetch || $fetch)(Config.interface+'/search?'+params).catch(e => {
             throw Error(e.data)
