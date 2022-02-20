@@ -18,14 +18,14 @@ export const Pool = {
     /**
      * Create pool
      */
-    create: async ({token, program, name=null, description=null, mechanism=null, candidates=null, rate=null, percentage=null, number=null, expires=null, answers=null, meta=null, minAmount=null, maxAmount=null, minTime=null, maxTime=null, transfersLimit=null, claimsLimit=null, tokenLimit=null, xetaLimit=null, tokenTarget=null, xetaTarget=null}, tx={}) => {
+    create: async ({token, program, name=null, description=null, type=null, candidates=null, rate=null, percentage=null, number=null, expires=null, answers=null, meta=null, minAmount=null, maxAmount=null, minTime=null, maxTime=null, transfersLimit=null, claimsLimit=null, tokenLimit=null, xetaLimit=null, tokenTarget=null, xetaTarget=null}, tx={}) => {
         return Instruction.wrap({
             function: 'pool.create',
             token: token,
             program: program,
             name: name,
             description: description,
-            mechanism: mechanism,
+            type: type,
             candidates: candidates,
             rate: rate,
             percentage: percentage,
@@ -210,6 +210,19 @@ export const Pool = {
             indexValue: program,
             sort: 'transfersCount',
             sortValue: transfersCount,
+            keyValue: address,
+        }, ...args})
+    },
+    /**
+     * Scan pools by active program, sort by type
+     */
+    scanProgramType: async ({program, type=null, address=null}, args={}) => {
+        return Resource.scan({...{
+            type: 'pool',
+            index: 'activeProgram',
+            indexValue: program,
+            sort: 'type',
+            sortValue: type,
             keyValue: address,
         }, ...args})
     },
