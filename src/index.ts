@@ -18,6 +18,7 @@ import { Wallet } from './modules/wallet'
 import { Auction } from './programs/auction'
 import { Launch } from './programs/launch'
 import { Lending } from './programs/lending'
+import { Listing } from './programs/listing'
 import { Lock } from './programs/lock'
 import { Loot } from './programs/loot'
 import { Lottery } from './programs/lottery'
@@ -59,6 +60,7 @@ const Xeta = {
     auction: Auction,
     launch: Launch,
     lending: Lending,
+    listing: Listing,
     lock: Lock,
     loot: Loot,
     lottery: Lottery,
