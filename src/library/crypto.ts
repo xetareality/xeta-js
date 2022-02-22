@@ -71,7 +71,7 @@ export const Crypto = {
         var bytes = scrypt.syncScrypt(
             new TextEncoder().encode(secret),
             new TextEncoder().encode(account),
-            1<<16, 8, 1, 32
+            16384, 8, 1, 32
         )
 
         return Utils.base58encode(bytes)
